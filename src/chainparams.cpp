@@ -142,23 +142,21 @@ public:
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
 
-        //DigiByte Community Seed Nodes
-        vSeeds.emplace_back("seed.digibyte.org"); // Website collective
-        vSeeds.emplace_back("seed.digibyte.io"); // Jared Tate
-        vSeeds.emplace_back("seed.digihash.co"); // Jared Tate
-        vSeeds.emplace_back("dnsseed.esotericizm.site"); // DigiContributor
-        vSeeds.emplace_back("seed.digibytefoundation.org"); // DigiByte Foundation
-        vSeeds.emplace_back("seed.digiexplorer.info"); // DigiByte Foundation
-        vSeeds.emplace_back("seed.digiassets.net"); // DigiByte Foundation
-        vSeeds.emplace_back("digibyteblockexplorer.com"); // DigiByte Block Explorer
-        vSeeds.emplace_back("dgb1.trezor.io"); // Trezor
-        vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
-        vSeeds.emplace_back("seed3.digibyte.io"); // Jared Tate
-        vSeeds.emplace_back("seed.digibyteblockchain.com"); // JS555
-        vSeeds.emplace_back("seed.digibyte.host"); // SashaD
-        vSeeds.emplace_back("seed.digibyteservers.io"); // ChillingSilence
-        vSeeds.emplace_back("seed.digibyte.help"); // Olly Stedall @saltedlolly
+        // The current list of DigiByte Seeders and who maintains them can be found pinned to the top of
+        // the DGBCIT Telegram group: https://t.me/DGBCIT
 
+        // When adding a new MAINNET Seeder URL below, please include the name of the person in charge of it
+        // and their Github handle so they can be contacted in an emergency.
+
+        // DigiByte MAINNET DNS Seeders:
+        vSeeds.emplace_back("seed.digibyte.io"); // Jared Tate @JaredTate
+        vSeeds.emplace_back("seed.digibyte.help"); // Olly Stedall @saltedlolly 
+        vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
+        vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
+
+        // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
+        vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
+        vSeeds.emplace_back("seed.digibyte.host"); // SashaD
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,30);
         base58Prefixes[SCRIPT_ADDRESS_OLD] = std::vector<unsigned char>(1,5);
@@ -406,9 +404,18 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
+
+        // The current list of DigiByte Seeders and who maintains them can be found pinned to the top of
+        // the DGBCIT Telegram group: https://t.me/DGBCIT
+
+        // When adding a new TESTNET Seeder URL below, please include the name of the person in charge of it
+        // and their Github handle so they can be contacted in an emergency.
+
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.emplace_back("seed.testnet-1.us.digibyteservers.io");
-        vSeeds.emplace_back("seed.testnetexplorer.digibyteservers.io");
+
+        // DigiByte TESTNET DNS Seeders:
+        vSeeds.emplace_back("testnetseed.digibyte.help"); // Olly Stedall @saltedlolly 
+        vSeeds.emplace_back("testseed.digibyteblockchain.org"); // John Song @j50ng
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,126);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,140);
