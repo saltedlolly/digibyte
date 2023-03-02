@@ -1266,7 +1266,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     // ToDo: Remove this statement in a future release, along
     // with a fixed supply curve.
     if (nSubsidy < COIN) {
-        nSubsidy = COIN;
+        nSubsidy = 0;
     }
 
     return nSubsidy;
