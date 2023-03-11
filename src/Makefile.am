@@ -571,7 +571,7 @@ libdigibyte_consensus_a_SOURCES = \
 
 # common: shared between digibyted, and digibyte-qt and non-server tools
 libdigibyte_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(DIGIBYTE_INCLUDES)
-libdigibyte_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libdigibyte_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) $(PIC_FLAGS)
 libdigibyte_common_a_SOURCES = \
   base58.cpp \
   bech32.cpp \
