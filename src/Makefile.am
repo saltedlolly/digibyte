@@ -445,7 +445,7 @@ crypto_libdigibyte_crypto_base_a_CPPFLAGS = $(AM_CPPFLAGS)
 crypto_libdigibyte_crypto_base_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libdigibyte_crypto_base_a_SOURCES = \
   crypto/aes.cpp \
-  crypto/aes_helper.c \
+  crypto/aes_helper.cpp \
   crypto/aes.h \
   crypto/chacha_poly_aead.h \
   crypto/chacha_poly_aead.cpp \
@@ -458,7 +458,7 @@ crypto_libdigibyte_crypto_base_a_SOURCES = \
   crypto/hmac_sha256.h \
   crypto/hmac_sha512.cpp \
   crypto/hmac_sha512.h \
-  crypto/KeccakP-800-reference.c \
+  crypto/KeccakP-800-reference.cpp \
   crypto/KeccakP-800-SnP.h \
   crypto/poly1305.h \
   crypto/poly1305.cpp \
@@ -512,17 +512,17 @@ libdigibyte_consensus_a_SOURCES = \
   consensus/params.h \
   consensus/tx_check.cpp \
   consensus/validation.h \
-  crypto/blake.c \
-  crypto/bmw.c \
-  crypto/cubehash.c \
-  crypto/echo.c \
-  crypto/groestl.c \
-  crypto/jh.c \
-  crypto/keccak.c \
-  crypto/luffa.c \
-  crypto/shavite.c \
-  crypto/simd.c \
-  crypto/skein.c \
+  crypto/blake.cpp \
+  crypto/bmw.cpp \
+  crypto/cubehash.cpp \
+  crypto/echo.cpp \
+  crypto/groestl.cpp \
+  crypto/jh.cpp \
+  crypto/keccak.cpp \
+  crypto/luffa.cpp \
+  crypto/shavite.cpp \
+  crypto/simd.cpp \
+  crypto/skein.cpp \
   crypto/hashgroestl.h \
   crypto/hashodo.h \
   crypto/hashqubit.h \
