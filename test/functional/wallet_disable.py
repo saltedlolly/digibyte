@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2009-2019 The Bitcoin Core developers
-# Copyright (c) 2014-2019 The DigiByte Core developers
+# Copyright (c) 2015-2021 The DigiByte Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test a node with the -disablewallet option.
@@ -17,19 +16,20 @@ class DisableWalletTest (DigiByteTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 1
         self.extra_args = [["-disablewallet"]]
+        self.wallet_names = []
 
     def run_test (self):
         # Make sure wallet is really disabled
         assert_raises_rpc_error(-32601, 'Method not found', self.nodes[0].getwalletinfo)
         x = self.nodes[0].validateaddress('3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy')
-        assert(x['isvalid'] == False)
-        x = self.nodes[0].validateaddress('mneYUmWYsuk7kySiURxCi3AGxrAqZxLgPZ')
-        assert(x['isvalid'] == True)
+        assert x['isvalid'] == False
+        x = self.nodes[0].validateaddress('t4Au1qr9aBPfNpBRE1vLqvXhe4YAFD3iGn')
+        assert x['isvalid'] == True
 
         # Checking mining to an address without a wallet. Generating to a valid address should succeed
         # but generating to an invalid address will fail.
-        self.nodes[0].generatetoaddress(1, 'mneYUmWYsuk7kySiURxCi3AGxrAqZxLgPZ')
-        assert_raises_rpc_error(-5, "Invalid address", self.nodes[0].generatetoaddress, 1, '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy')
+        self.generatetoaddress(self.nodes[0], 1, 't4Au1qr9aBPfNpBRE1vLqvXhe4YAFD3iGn')
+        assert_raises_rpc_error(-5, "Invalid address", self.generatetoaddress, self.nodes[0], 1, '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy')
 
 if __name__ == '__main__':
     DisableWalletTest ().main ()
