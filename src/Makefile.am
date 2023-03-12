@@ -27,7 +27,6 @@ endif
 
 DIGIBYTE_INCLUDES=-I$(builddir) -I$(srcdir)/secp256k1/include $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS)
 
-DIGIBYTE_INCLUDES += -I$(srcdir)/secp256k1/include
 DIGIBYTE_INCLUDES += $(UNIVALUE_CFLAGS)
 
 LIBDIGIBYTE_SERVER=libdigibyte_server.a
@@ -571,7 +570,7 @@ libdigibyte_consensus_a_SOURCES = \
 
 # common: shared between digibyted, and digibyte-qt and non-server tools
 libdigibyte_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(DIGIBYTE_INCLUDES)
-libdigibyte_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) $(PIC_FLAGS)
+libdigibyte_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libdigibyte_common_a_SOURCES = \
   base58.cpp \
   bech32.cpp \
@@ -725,7 +724,7 @@ digibyte_cli_LDADD = \
   $(LIBDIGIBYTE_CLI) \
   $(LIBUNIVALUE) \
   $(LIBDIGIBYTE_COMMON) \
-  $(LIBDIGIBYTE_CONSENSUS) \  
+  $(LIBDIGIBYTE_CONSENSUS) \
   $(LIBDIGIBYTE_UTIL) \
   $(LIBDIGIBYTE_CRYPTO)
 
