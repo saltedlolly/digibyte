@@ -62,7 +62,7 @@ extern "C"{
  */
 
 #define AES_BIG_ENDIAN   0
-#include "aes_helper.c"
+#include "aes_helper.cpp"
 
 static const sph_u32 IV224[] = {
 	C32(0x6774F31C), C32(0x990AE210), C32(0xC87D4274), C32(0xC9546371),
@@ -102,7 +102,7 @@ static const sph_u32 IV512[] = {
  * 
 
 #define AES_BIG_ENDIAN   1
-#include "aes_helper.c"
+#include "aes_helper.cpp"
 
 static const sph_u32 IV224[] = {
 	C32(0xC4C67795), C32(0xC0B1817F), C32(0xEAD88924), C32(0x1ABB1BB0),
@@ -1703,60 +1703,60 @@ sph_shavite256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 void
 sph_shavite384_init(void *cc)
 {
-	shavite_big_init(cc, IV384);
+	shavite_big_init((sph_shavite_big_context*) cc, IV384);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite384(void *cc, const void *data, size_t len)
 {
-	shavite_big_core(cc, data, len);
+	shavite_big_core((sph_shavite_big_context*) cc, data, len);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite384_close(void *cc, void *dst)
 {
-	shavite_big_close(cc, 0, 0, dst, 12);
-	shavite_big_init(cc, IV384);
+	shavite_big_close((sph_shavite_big_context*) cc, 0, 0, dst, 12);
+	shavite_big_init((sph_shavite_big_context*) cc, IV384);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 {
-	shavite_big_close(cc, ub, n, dst, 12);
-	shavite_big_init(cc, IV384);
+	shavite_big_close((sph_shavite_big_context*) cc, ub, n, dst, 12);
+	shavite_big_init((sph_shavite_big_context*) cc, IV384);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite512_init(void *cc)
 {
-	shavite_big_init(cc, IV512);
+	shavite_big_init((sph_shavite_big_context*) cc, IV512);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite512(void *cc, const void *data, size_t len)
 {
-	shavite_big_core(cc, data, len);
+	shavite_big_core((sph_shavite_big_context*) cc, data, len);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite512_close(void *cc, void *dst)
 {
-	shavite_big_close(cc, 0, 0, dst, 16);
-	shavite_big_init(cc, IV512);
+	shavite_big_close((sph_shavite_big_context*) cc, 0, 0, dst, 16);
+	shavite_big_init((sph_shavite_big_context*) cc, IV512);
 }
 
 /* see sph_shavite.h */
 void
 sph_shavite512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 {
-	shavite_big_close(cc, ub, n, dst, 16);
-	shavite_big_init(cc, IV512);
+	shavite_big_close((sph_shavite_big_context*) cc, ub, n, dst, 16);
+	shavite_big_init((sph_shavite_big_context*) cc, IV512);
 }
 
 #ifdef __cplusplus

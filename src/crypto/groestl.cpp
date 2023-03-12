@@ -2823,7 +2823,6 @@ groestl_small_close(sph_groestl_small_context *sc,
 	unsigned z;
 	DECL_STATE_SMALL
 
-	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
 	pad[0] = ((ub & -z) | z) & 0xFF;
@@ -2958,7 +2957,6 @@ groestl_big_close(sph_groestl_big_context *sc,
 	unsigned z;
 	DECL_STATE_BIG
 
-	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
 	pad[0] = ((ub & -z) | z) & 0xFF;

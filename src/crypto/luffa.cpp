@@ -30,6 +30,8 @@
  * @author   Thomas Pornin <thomas.pornin@cryptolog.com>
  */
 
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
@@ -1384,7 +1386,7 @@ sph_luffa384_close(void *cc, void *dst)
 void
 sph_luffa384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 {
-	luffa4_close(cc, ub, n, dst);
+	luffa4_close((sph_luffa384_context*) cc, ub, n, dst);
 	sph_luffa384_init((sph_luffa384_context*) cc);
 }
 

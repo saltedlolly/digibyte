@@ -1573,7 +1573,7 @@ init_big(void *cc, const u32 *iv)
 {
 	sph_simd_big_context *sc;
 
-	sc = (sph_simd_small_context*) cc;
+	sc = (sph_simd_big_context*) cc;
 	memcpy(sc->state, iv, sizeof sc->state);
 	sc->count_low = sc->count_high = 0;
 	sc->ptr = 0;
@@ -1609,7 +1609,7 @@ update_big(void *cc, const void *data, size_t len)
 {
 	sph_simd_big_context *sc;
 
-	sc = (sph_simd_small_context*) cc;
+	sc = (sph_simd_big_context*) cc;
 	while (len > 0) {
 		size_t clen;
 
