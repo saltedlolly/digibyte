@@ -43,11 +43,11 @@ from utils import determine_wellknown_cmd
 MAX_VERSIONS = {
 'GCC':       (4,8,0),
 'GLIBC': {
-    pixie.EM_386:    (2,17),
-    pixie.EM_X86_64: (2,17),
-    pixie.EM_ARM:    (2,17),
-    pixie.EM_AARCH64:(2,17),
-    pixie.EM_PPC64:  (2,17),
+    pixie.EM_386:    (2,18),
+    pixie.EM_X86_64: (2,18),
+    pixie.EM_ARM:    (2,18),
+    pixie.EM_AARCH64:(2,18),
+    pixie.EM_PPC64:  (2,18),
     pixie.EM_RISCV:  (2,27),
 },
 'LIBATOMIC': (1,0),
@@ -84,7 +84,19 @@ ELF_ALLOWED_LIBRARIES = {
 'libxkbcommon-x11.so.0', # keyboard keymapping
 'libfontconfig.so.1', # font support
 'libfreetype.so.6', # font parsing
-'libdl.so.2' # programming interface to dynamic linker
+'libdl.so.2', # programming interface to dynamic linker
+'libxcb-icccm.so.4',
+'libxcb-image.so.0',
+'libxcb-shm.so.0',
+'libxcb-keysyms.so.1',
+'libxcb-randr.so.0',
+'libxcb-render-util.so.0',
+'libxcb-render.so.0',
+'libxcb-shape.so.0',
+'libxcb-sync.so.1',
+'libxcb-xfixes.so.0',
+'libxcb-xinerama.so.0',
+'libxcb-xkb.so.1',
 }
 
 MACHO_ALLOWED_LIBRARIES = {
