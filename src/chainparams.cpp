@@ -285,7 +285,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        consensus.powLimit = ArithToUint256(~arith_uint256(0) >> 20);Jongjan88/digibyte
+        consensus.powLimit = ArithToUint256(~arith_uint256(0) >> 20);
         consensus.initialTarget[ALGO_ODO] = ArithToUint256(~arith_uint256(0) >> 36); // 16 difficulty
         consensus.nSubsidyHalvingInterval = 300;
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
