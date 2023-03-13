@@ -107,6 +107,7 @@ MACHO_ALLOWED_LIBRARIES = {
 'AppKit', # user interface
 'ApplicationServices', # common application tasks.
 'Carbon', # deprecated c back-compat API
+'ColorSync',
 'CoreFoundation', # low level func, data types
 'CoreGraphics', # 2D rendering
 'CoreServices', # operating system services
@@ -229,7 +230,7 @@ def check_MACHO_libraries(filename) -> bool:
 
 def check_MACHO_min_os(filename) -> bool:
     binary = lief.parse(filename)
-    if binary.build_version.minos == [10,14,0]:
+    if binary.build_version.minos == [10,15,0]:
         return True
     return False
 
