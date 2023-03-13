@@ -153,6 +153,7 @@ public:
         vSeeds.emplace_back("seed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
         vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
+        vSeeds.emplace_back("eu.digibyteseed.com"); // Jan De Jong @jongjan88
 
         // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
         vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
@@ -284,7 +285,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        consensus.powLimit = ArithToUint256(~arith_uint256(0) >> 20);
+        consensus.powLimit = ArithToUint256(~arith_uint256(0) >> 20);Jongjan88/digibyte
         consensus.initialTarget[ALGO_ODO] = ArithToUint256(~arith_uint256(0) >> 36); // 16 difficulty
         consensus.nSubsidyHalvingInterval = 300;
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
@@ -416,6 +417,7 @@ public:
         // DigiByte TESTNET DNS Seeders:
         vSeeds.emplace_back("testnetseed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("testseed.digibyteblockchain.org"); // John Song @j50ng
+        vSeeds.emplace_back("testnet.digibyteseed.com"); // Jan De Jong @jongjan88
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,126);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,140);
