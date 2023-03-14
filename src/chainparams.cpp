@@ -154,6 +154,7 @@ public:
         vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
         vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
         vSeeds.emplace_back("eu.digibyteseed.com"); // Jan De Jong @jongjan88
+        vSeeds.emplace_back("seed.digibyte.link"); // Bastian Driessen @bastiandriessen
 
         // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
         vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
@@ -418,6 +419,7 @@ public:
         vSeeds.emplace_back("testnetseed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("testseed.digibyteblockchain.org"); // John Song @j50ng
         vSeeds.emplace_back("testnet.digibyteseed.com"); // Jan De Jong @jongjan88
+        vSeeds.emplace_back("testnetseed.digibyte.link"); // Bastian Driessen @bastiandriessen
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,126);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,140);
