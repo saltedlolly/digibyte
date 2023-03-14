@@ -154,6 +154,7 @@ public:
         vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
         vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
         vSeeds.emplace_back("eu.digibyteseed.com"); // Jan De Jong @jongjan88
+        vSeeds.emplace_back("seed.quakeguy.com"); // Paul Morgan Quakeitup @SnKQuaKe
 
         // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
         vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
