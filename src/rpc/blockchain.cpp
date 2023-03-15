@@ -485,7 +485,6 @@ static RPCHelpMan getdifficulty()
 
     const CBlockIndex* tip = active_chainstate.m_chain.Tip();
     CHECK_NONFATAL(tip);
-    const int height = tip->nHeight;
     UniValue obj(UniValue::VOBJ);
 
     const Consensus::Params& consensusParams = Params().GetConsensus();

@@ -7,9 +7,7 @@
 
 #include <string.h>
 
-extern "C" {
-#include <crypto/ctaes/ctaes.c>
-}
+#include <crypto/ctaes/ctaes.cpp>
 
 AES256Encrypt::AES256Encrypt(const unsigned char key[32])
 {

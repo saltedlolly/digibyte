@@ -8,9 +8,7 @@
 
 #include "uint256.h"
 #include "odocrypt.h"
-extern "C" {
 #include "KeccakP-800-SnP.h"
-}
 
 template<typename T1>
 inline uint256 HashOdo(const T1 pbegin, const T1 pend, uint32_t key)
