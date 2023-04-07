@@ -15,12 +15,16 @@ class GetBlockRewardTest(DigiByteTestFramework):
         node = self.nodes[0]
 
         # Mine some blocks
-        self.generatetoaddress(101, node.get_deterministic_priv_key().address)
+        num_blocks = 101
+        node.generatetoaddress(num_blocks, node.get_deterministic_priv_key().address, invalid_call=False)
 
         # Test getblockreward RPC
         block_reward = node.getblockreward()
         self.log.info("Current block reward: {}".format(block_reward["blockreward"]))
-        assert_equal(block_reward["blockreward"], <expected_block_reward>)
+
+        # Replace 12.5 with the expected block reward value for your test
+        expected_block_reward = 72000
+        assert_equal(block_reward["blockreward"], expected_block_reward)
 
 if __name__ == '__main__':
     GetBlockRewardTest().main()
