@@ -227,6 +227,7 @@ BASE_SCRIPTS = [
     'rpc_signmessage.py',
     'rpc_generateblock.py',
     'rpc_generate.py',
+    'rpc_getblockreward.py',
     'wallet_balance.py --legacy-wallet',
     'wallet_balance.py --descriptors',
     'feature_nulldummy.py --legacy-wallet',

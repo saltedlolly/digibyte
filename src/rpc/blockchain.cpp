@@ -44,14 +44,12 @@
 #include <validationinterface.h>
 #include <versionbits.h>
 #include <warnings.h>
-
 #include <stdint.h>
-
 #include <univalue.h>
-
 #include <condition_variable>
 #include <memory>
 #include <mutex>
+#include <validation.h>
 
 struct CUpdatedBlock
 {
@@ -62,6 +60,8 @@ struct CUpdatedBlock
 static Mutex cs_blockchange;
 static std::condition_variable cond_blockchange;
 static CUpdatedBlock latestblock GUARDED_BY(cs_blockchange);
+static UniValue getblockreward(const JSONRPCRequest& request);
+
 
 NodeContext& EnsureAnyNodeContext(const std::any& context)
 {
@@ -2684,6 +2684,40 @@ UniValue CreateUTXOSnapshot(NodeContext& node, CChainState& chainstate, CAutoFil
     return result;
 }
 
+static RPCHelpMan getblockreward()
+{
+    return RPCHelpMan{"getblockreward",
+        "\nReturns the current DGB block reward.\n",
+        {},
+        RPCResult{
+            RPCResult::Type::OBJ, "", "Information about the current block reward",
+            {
+                {"blockreward", RPCResult::Type::NUM, "n", "The current block reward in DGB"},
+            }},
+        RPCExamples{
+            HelpExampleCli("getblockreward", "")
+            + HelpExampleRpc("getblockreward", "")
+        },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+    {
+        ChainstateManager& chainman = EnsureAnyChainman(request.context);
+        LOCK(cs_main);
+        CChain& active_chain = chainman.ActiveChain();
+        CBlockIndex* pindex = active_chain.Tip();
+
+        if (!pindex)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "Error: Couldn't find the current block");
+
+        int64_t nReward = GetBlockSubsidy(pindex->nHeight, Params().GetConsensus());
+        UniValue result(UniValue::VOBJ);
+        result.pushKV("blockreward", ValueFromAmount(nReward));
+
+        return result;
+    }};
+}
+
+
+
 void RegisterBlockchainRPCCommands(CRPCTable &t)
 {
 // clang-format off
@@ -2710,10 +2744,10 @@ static const CRPCCommand commands[] =
     { "blockchain",         &pruneblockchain,                    },
     { "blockchain",         &savemempool,                        },
     { "blockchain",         &verifychain,                        },
-
     { "blockchain",         &preciousblock,                      },
     { "blockchain",         &scantxoutset,                       },
     { "blockchain",         &getblockfilter,                     },
+    { "blockchain",         &getblockreward,                     },\
 
     /* Not shown in help */
     { "hidden",              &invalidateblock,                   },
