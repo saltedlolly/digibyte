@@ -587,6 +587,7 @@ static RPCHelpMan getblocktemplate()
                 }},
             },
                         "\"template_request\""},
+            {"algo", RPCArg::Type::STR, RPCArg::Default{GetAlgoName(ALGO_SCRYPT)}, "Which mining algorithm to use."},
         },
         {
             RPCResult{"If the proposal was accepted with mode=='proposal'", RPCResult::Type::NONE, "", ""},
