@@ -438,8 +438,10 @@ static RPCHelpMan getmininginfo()
                         {RPCResult::Type::NUM, "blocks", "The current block"},
                         {RPCResult::Type::NUM, "currentblockweight", /* optional */ true, "The block weight of the last assembled block (only present if a block was ever assembled)"},
                         {RPCResult::Type::NUM, "currentblocktx", /* optional */ true, "The number of block transactions of the last assembled block (only present if a block was ever assembled)"},
+                        {RPCResult::Type::NUM, "difficulty", "The current difficulty."},
                         {RPCResult::Type::NUM, "difficulties", "The current difficulty for all 5 DGB algos."},
-                        {RPCResult::Type::NUM, "networkhashps", "The network hashes per second for all 5 DGB algos."},
+                        {RPCResult::Type::NUM, "networkhashps", "The network hashes per second."},
+                        {RPCResult::Type::NUM, "networkhashesps", "The network hashes per second for all 5 DGB algos."},
                         {RPCResult::Type::NUM, "pooledtx", "The size of the mempool"},
                         {RPCResult::Type::STR, "chain", "current network name (main, test, signet, regtest)"},
                         {RPCResult::Type::STR, "warnings", "any network and blockchain warnings"},
@@ -477,16 +479,18 @@ static RPCHelpMan getmininginfo()
             difficulties.pushKV(GetAlgoName(algo), (double)GetDifficulty(tip, NULL, algo));
         }
     }
+    obj.pushKV("difficulty", (double)GetDifficulty(tip, NULL, miningAlgo));
     obj.pushKV("difficulties", difficulties);
-    UniValue networkhashps(UniValue::VOBJ);
+    UniValue networkhashesps(UniValue::VOBJ);
     for (int algo = 0; algo < NUM_ALGOS_IMPL; algo++)
     {
         if (IsAlgoActive(tip, consensusParams, algo))
         {
-            networkhashps.pushKV(GetAlgoName(algo), (UniValue)GetNetworkHashPS(120, -1,active_chain, algo));
+            networkhashesps.pushKV(GetAlgoName(algo), (UniValue)GetNetworkHashPS(120, -1,active_chain, algo));
         }
     }
-    obj.pushKV("networkhashps",    networkhashps);
+    obj.pushKV("networkhashps", getnetworkhashps().HandleRequest(request));
+    obj.pushKV("networkhashesps",    networkhashesps);
     obj.pushKV("pooledtx",         (uint64_t)mempool.size());
     obj.pushKV("chain",            Params().NetworkIDString());
     obj.pushKV("warnings",         GetWarnings(false).original);
