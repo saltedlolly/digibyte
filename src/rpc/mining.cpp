@@ -103,7 +103,7 @@ static RPCHelpMan getnetworkhashps()
                 {
                     {"nblocks", RPCArg::Type::NUM, RPCArg::Default{120}, "The number of blocks, or -1 for blocks since last difficulty change."},
                     {"height", RPCArg::Type::NUM, RPCArg::Default{-1}, "To estimate at the time of the given height."},
-                    {"algo", RPCArg::Type::STR, RPCArg::Default{GetAlgoName(ALGO_SCRYPT)}, "Which mining algorithm to use."},
+                    {"algo", RPCArg::Type::STR, RPCArg::Default{GetAlgoName(miningAlgo)}, "Which mining algorithm to use."},
                 },
                 RPCResult{
                     RPCResult::Type::NUM, "", "Hashes per second estimated"},
@@ -116,7 +116,7 @@ static RPCHelpMan getnetworkhashps()
     ChainstateManager& chainman = EnsureAnyChainman(request.context);
     LOCK(cs_main);
     int algo = miningAlgo;
-    if (!request.params[3].isNull()) {
+    if (!request.params[2].isNull()) {
         algo = GetAlgoByName(request.params[2].get_str(), algo);
     }    
     return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1, chainman.ActiveChain(), algo);
