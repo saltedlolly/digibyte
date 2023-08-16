@@ -204,20 +204,11 @@ public:
         };
 
         chainTxData = ChainTxData{
-            // Data as of block 6495a84f8f83981a435a6cbf9e6dd4bf0f38618c8325213ca6ef6add40c0ddd8 (height 6,000,000).
-            1416891634, // * UNIX timestamp of last known number of transactions
-            1046018,  // * total number of transactions between genesis and that timestamp
-                        //   (the tx=... number in the SetBestChain debug.log lines)
-            0.1         // * estimated number of transactions per second after that timestamp
+            // Data from RPC: getchaintxstats 172800 0000000000000004d65cca5df8c44830e0a20ff58881e3dfd317528f6635a77c
+            /* nTime    */ 1692147015,
+            /* nTxCount */ 44039736,
+            /* dTxRate  */ 0.1244932494502668,
         };
-
-        chainTxData = ChainTxData{
-            // Data from RPC: getchaintxstats 4096 00000000000000000008a89e854d57e5667df88f1cdef6fde2fbca1de5b639ad
-            /* nTime    */ 1626697539,
-            /* nTxCount */ 656509474,
-            /* dTxRate  */ 2.424920418708139,
-        };
-
 
         // BEGIN OLD DGB Consensus Diff Timing Code
 
@@ -448,10 +439,10 @@ public:
         };
 
         chainTxData = ChainTxData{
-            // Data from RPC: getchaintxstats 4096 0000000000004ae2f3896ca8ecd41c460a35bf6184e145d91558cece1c688a76
-            /* nTime    */ 1625727096,
-            /* nTxCount */ 60408943,
-            /* dTxRate  */ 0.08379062270367649,
+            // Data from RPC: getchaintxstats 172800 048c8a5a82d702e029633a8a2cec681f614f7beebb1e62a6c2f9d980d1215993
+            /* nTime    */ 1691854789,
+            /* nTxCount */ 2676308,
+            /* dTxRate  */ 0.02783886417253829,
         };
     }
 };
