@@ -47,7 +47,7 @@
  * or from the last difficulty change if 'lookup' is nonpositive.
  * If 'height' is nonnegative, compute the estimate at the time when a given block was found.
  */
-static UniValue GetNetworkHashPS(int lookup, int height, const CChain& active_chain) {
+static UniValue GetNetworkHashPS(int lookup, int height, const CChain& active_chain, int algo) {
     const CBlockIndex* pb = active_chain.Tip();
 
     if (height >= 0 && height < active_chain.Height()) {
@@ -65,21 +65,30 @@ static UniValue GetNetworkHashPS(int lookup, int height, const CChain& active_ch
     if (lookup > pb->nHeight)
         lookup = pb->nHeight;
 
-    const CBlockIndex* pb0 = pb;
+    while(pb->GetAlgo() != algo) {
+        assert (pb->pprev);
+        pb = pb->pprev;
+    }
+
+    const CBlockIndex *pb0 = pb;
     int64_t minTime = pb0->GetBlockTime();
     int64_t maxTime = minTime;
+    arith_uint256 workDiff = GetBlockProof(*pb0, algo); 
+
     for (int i = 0; i < lookup; i++) {
         pb0 = pb0->pprev;
-        int64_t time = pb0->GetBlockTime();
-        minTime = std::min(time, minTime);
-        maxTime = std::max(time, maxTime);
+        if(pb0->GetAlgo() == algo) {
+            int64_t time = pb0->GetBlockTime();
+            minTime = std::min(time, minTime);
+            maxTime = std::max(time, maxTime);
+            workDiff += GetBlockProof(*pb0, algo); 
+        }
     }
 
     // In case there's a situation where minTime == maxTime, we don't want a divide by zero exception.
     if (minTime == maxTime)
         return 0;
 
-    arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
     int64_t timeDiff = maxTime - minTime;
 
     return workDiff.getdouble() / timeDiff;
@@ -94,6 +103,7 @@ static RPCHelpMan getnetworkhashps()
                 {
                     {"nblocks", RPCArg::Type::NUM, RPCArg::Default{120}, "The number of blocks, or -1 for blocks since last difficulty change."},
                     {"height", RPCArg::Type::NUM, RPCArg::Default{-1}, "To estimate at the time of the given height."},
+                    {"algo", RPCArg::Type::STR, RPCArg::Default{GetAlgoName(miningAlgo)}, "Which mining algorithm to use."},
                 },
                 RPCResult{
                     RPCResult::Type::NUM, "", "Hashes per second estimated"},
@@ -105,7 +115,11 @@ static RPCHelpMan getnetworkhashps()
 {
     ChainstateManager& chainman = EnsureAnyChainman(request.context);
     LOCK(cs_main);
-    return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1, chainman.ActiveChain());
+    int algo = miningAlgo;
+    if (!request.params[2].isNull()) {
+        algo = GetAlgoByName(request.params[2].get_str(), algo);
+    }    
+    return GetNetworkHashPS(!request.params[0].isNull() ? request.params[0].get_int() : 120, !request.params[1].isNull() ? request.params[1].get_int() : -1, chainman.ActiveChain(), algo);
 },
     };
 }
@@ -424,8 +438,10 @@ static RPCHelpMan getmininginfo()
                         {RPCResult::Type::NUM, "blocks", "The current block"},
                         {RPCResult::Type::NUM, "currentblockweight", /* optional */ true, "The block weight of the last assembled block (only present if a block was ever assembled)"},
                         {RPCResult::Type::NUM, "currentblocktx", /* optional */ true, "The number of block transactions of the last assembled block (only present if a block was ever assembled)"},
+                        {RPCResult::Type::NUM, "difficulty", "The current difficulty."},
                         {RPCResult::Type::NUM, "difficulties", "The current difficulty for all 5 DGB algos."},
-                        {RPCResult::Type::NUM, "networkhashps", "The network hashes per second"},
+                        {RPCResult::Type::NUM, "networkhashps", "The network hashes per second."},
+                        {RPCResult::Type::NUM, "networkhashesps", "The network hashes per second for all 5 DGB algos."},
                         {RPCResult::Type::NUM, "pooledtx", "The size of the mempool"},
                         {RPCResult::Type::STR, "chain", "current network name (main, test, signet, regtest)"},
                         {RPCResult::Type::STR, "warnings", "any network and blockchain warnings"},
@@ -463,8 +479,18 @@ static RPCHelpMan getmininginfo()
             difficulties.pushKV(GetAlgoName(algo), (double)GetDifficulty(tip, NULL, algo));
         }
     }
+    obj.pushKV("difficulty", (double)GetDifficulty(tip, NULL, miningAlgo));
     obj.pushKV("difficulties", difficulties);
-    obj.pushKV("networkhashps",    getnetworkhashps().HandleRequest(request));
+    UniValue networkhashesps(UniValue::VOBJ);
+    for (int algo = 0; algo < NUM_ALGOS_IMPL; algo++)
+    {
+        if (IsAlgoActive(tip, consensusParams, algo))
+        {
+            networkhashesps.pushKV(GetAlgoName(algo), (UniValue)GetNetworkHashPS(120, -1,active_chain, algo));
+        }
+    }
+    obj.pushKV("networkhashps", getnetworkhashps().HandleRequest(request));
+    obj.pushKV("networkhashesps",    networkhashesps);
     obj.pushKV("pooledtx",         (uint64_t)mempool.size());
     obj.pushKV("chain",            Params().NetworkIDString());
     obj.pushKV("warnings",         GetWarnings(false).original);
@@ -565,6 +591,7 @@ static RPCHelpMan getblocktemplate()
                 }},
             },
                         "\"template_request\""},
+            {"algo", RPCArg::Type::STR, RPCArg::Default{GetAlgoName(ALGO_SCRYPT)}, "Which mining algorithm to use."},
         },
         {
             RPCResult{"If the proposal was accepted with mode=='proposal'", RPCResult::Type::NONE, "", ""},
