@@ -1,16 +1,25 @@
-# List of fixed seed nodes for testnet
+# List of fixed seed nodes for DigiByte testnet
 
-# Onion nodes
-35k2va6vyw4oo5ly2quvcszgdqr56kcnfgcqpnpcffut4jn3mhhwgbid.onion:18333
-blo2esfvk2rr7sr4jspmu3vt2vpgr5rigflsj645fnku7v4qmljurtid.onion:18333
-fuckcswupr5rmlvx2kqqrrosxvjyong4hatmuvxsvtcwe4dsh5rus7qd.onion:18333
-gblylyacjlitd2ywdmo2qqylwtdky7kgeqfvlhiw4zdag4x62tx54hyd.onion:18333
-gzwpduv33l7yze3bcdzj3inebiyjwddjnwvnjhh5wvnv4me76mjt2kad.onion:18333
-h3rphzofxzq52tb63mg5f6kc4my3fkcrgh3m5qryeatts43iljbawiid.onion:18333
-kf4qlhek34b3kgyxyodlmvgm4bxfrjsbjtgayyaiuyhr2eoyfgtm3bad.onion:18333
-mc7k47ndjvvhcgs54wmjzxvate4rtuybbjoryikdssjhcxlx27psbyqd.onion:18333
-mrhiniicugfo7mgrwv3wtolk3tptlcw2uq7ih6sq43fa4k4zbilut3yd.onion:18333
-uiudyws3qizgmepfoh7wwjmsoxoxut4qrmotjjhrn247xnjopr7sfcid.onion:18333
-zc2wvoqcezcrf64trji6jmhtss34a5ds5ntzdhqegzvex3ynrd7nxcad.onion:18333
-zd5m3dgdn46naj36pxvvcalfw2paecle6sdxq64ptwxtxjomkywpklqd.onion:18333
+# IP4 Full Nodes added from digibyteseed.com 2023-11-28
+
+198.58.124.101:12026		
+157.245.63.215:12026
+37.59.20.42:12026
+86.144.61.189:12026
+8.214.25.169:12026
+217.72.6.241:12026
+99.233.25.27:12026
+86.144.61.212:12026
+89.217.169.40:12026
+
+
+# Onion / I2P Nodes
+
+# These should be added! Examples:
+
+# 2g5qfdkn2vvcbqhzcyvyiitg4ceukybxklraxjnu7atlhd22gdwywaid.onion:8333
+# 2jmtxvyup3ijr7u6uvu7ijtnojx4g5wodvaedivbv74w4vzntxbrhvad.onion:8333
+# 72l3ucjkuscrbiiepoehuwqgknyzgo7zuix5ty4puwrkyhtmnsga.b32.i2p:0
+# c4gfnttsuwqomiygupdqqqyy5y5emnk5c73hrfvatri67prd7vyq.b32.i2p:0
+# etc.
 
