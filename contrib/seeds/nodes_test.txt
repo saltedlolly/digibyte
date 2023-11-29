@@ -15,7 +15,7 @@
 
 # Onion / I2P Nodes
 
-# These should be added! Examples:
+# We should add these! Examples:
 
 # 2g5qfdkn2vvcbqhzcyvyiitg4ceukybxklraxjnu7atlhd22gdwywaid.onion:8333
 # 2jmtxvyup3ijr7u6uvu7ijtnojx4g5wodvaedivbv74w4vzntxbrhvad.onion:8333
