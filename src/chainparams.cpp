@@ -162,8 +162,7 @@ public:
         vSeeds.emplace_back("seed.digibyte.services"); // Craig Donnachie @cdonnachie
 
         // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
-        vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
-        vSeeds.emplace_back("seed.digibyte.host"); // SashaD
+        vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate  # 54.212.83.151
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,30);
         base58Prefixes[SCRIPT_ADDRESS_OLD] = std::vector<unsigned char>(1,5);
