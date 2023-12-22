@@ -155,7 +155,6 @@ public:
         vSeeds.emplace_back("seed.digibyte.io"); // Jared Tate @JaredTate
         vSeeds.emplace_back("seed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
-        vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
         vSeeds.emplace_back("eu.digibyteseed.com"); // Jan De Jong @jongjan88
         vSeeds.emplace_back("seed.digibyte.link"); // Bastian Driessen @bastiandriessen
         vSeeds.emplace_back("seed.quakeguy.com"); // Paul Morgan Quakeitup @SnKQuaKe
