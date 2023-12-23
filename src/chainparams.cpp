@@ -142,29 +142,24 @@ public:
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
 
-        // The current status of the DigiByte Seeders can be checked here: http://digibyteseed.com/
-        // If you notice a problem with an exiting Seeder, please contact the DigiByte Critical Infrastructure team (DGBCIT) 
+        // The current status of the DigiByte DNS Seed Servers can be checked here: http://digibyteseed.com/
+        // If you notice a problem with an exiting Seed Server, please contact the DigiByte Critical Infrastructure team (DGBCIT) 
         // via the #DGBCIT channel on the DigiByte Discord server: https://discord.com/channels/878200503815782400/1133815334013509764
         // Alternatively, create an issue ticket here: https://github.com/DigiByte-Core/digibyte/issues
 
-        // When adding a new MAINNET Seeder URL below, please include the name of the person in charge of it
+        // When adding a new MAINNET Seed Server URL below, please include the name of the person in charge of it
         // and their Github handle so they can be contacted in an emergency.
 
 
-        // DigiByte MAINNET DNS Seeders:
+        // DigiByte MAINNET DNS Seed Server:
         vSeeds.emplace_back("seed.digibyte.io"); // Jared Tate @JaredTate
         vSeeds.emplace_back("seed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("seed.digibyteblockchain.org"); // John Song @j50ng
-        vSeeds.emplace_back("seed.digibyte.org"); // Website collective [This will likely be removed if we cannot establish who maintains it.]
         vSeeds.emplace_back("eu.digibyteseed.com"); // Jan De Jong @jongjan88
         vSeeds.emplace_back("seed.digibyte.link"); // Bastian Driessen @bastiandriessen
         vSeeds.emplace_back("seed.quakeguy.com"); // Paul Morgan Quakeitup @SnKQuaKe
         vSeeds.emplace_back("seed.aroundtheblock.app"); // Mark McNiel @JohnnyLawDGB
         vSeeds.emplace_back("seed.digibyte.services"); // Craig Donnachie @cdonnachie
-
-        // DigiByte MAINNET Full Nodes: (These will eventually be removed to be replaced with genuine DigiByte Seeders above.)
-        vSeeds.emplace_back("seed2.digibyte.io"); // Jared Tate
-        vSeeds.emplace_back("seed.digibyte.host"); // SashaD
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,30);
         base58Prefixes[SCRIPT_ADDRESS_OLD] = std::vector<unsigned char>(1,5);
@@ -404,17 +399,17 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 
-        // The current status of the DigiByte Seeders can be checked here: http://digibyteseed.com/
-        // If you notice a problem with an exiting Seeder, please contact the DigiByte Critical Infrastructure team (DGBCIT) 
+        // The current status of the DigiByte DNS Seed Servers can be checked here: http://digibyteseed.com/
+        // If you notice a problem with an exiting Seed Server, please contact the DigiByte Critical Infrastructure team (DGBCIT) 
         // via the #DGBCIT channel on the DigiByte Discord server: https://discord.com/channels/878200503815782400/1133815334013509764
         // Alternatively, create an issue ticket here: https://github.com/DigiByte-Core/digibyte/issues
 
-        // When adding a new TESTNET Seeder URL below, please include the name of the person in charge of it
+        // When adding a new TESTNET Seed Server URL below, please include the name of the person in charge of it
         // and their Github handle so they can be contacted in an emergency.
 
         // nodes with support for servicebits filtering should be at the top
 
-        // DigiByte TESTNET DNS Seeders:
+        // DigiByte TESTNET DNS Seed Servers:
         vSeeds.emplace_back("testnetseed.digibyte.help"); // Olly Stedall @saltedlolly 
         vSeeds.emplace_back("testseed.digibyteblockchain.org"); // John Song @j50ng
         vSeeds.emplace_back("testnet.digibyteseed.com"); // Jan De Jong @jongjan88
