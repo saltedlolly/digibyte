@@ -71,7 +71,7 @@ static const CAmount DEFAULT_FALLBACK_FEE = 0;
 //! -discardfee default
 static const CAmount DEFAULT_DISCARD_FEE = 10000;
 //! -mintxfee default
-static const CAmount DEFAULT_TRANSACTION_MINFEE = 100000;
+static const CAmount DEFAULT_TRANSACTION_MINFEE = 10000000;
 /**
  * maximum fee increase allowed to do partial spend avoidance, even for nodes with this feature disabled by default
  *
