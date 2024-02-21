@@ -2324,7 +2324,7 @@ static RPCHelpMan settxfee()
 
     CAmount nAmount = AmountFromValue(request.params[0]);
     CFeeRate tx_fee_rate(nAmount, 10000000);
-    CFeeRate max_tx_fee_rate(pwallet->m_default_max_tx_fee, 4294967295);
+    CFeeRate max_tx_fee_rate(pwallet->m_default_max_tx_fee, 4000000000);
     if (tx_fee_rate == CFeeRate(0)) {
         // automatic selection
     } else if (tx_fee_rate < pwallet->chain().relayMinFee()) {
