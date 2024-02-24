@@ -9,7 +9,7 @@
 #include <tinyformat.h>
 #include <cmath>
 
-CFeeRate::CFeeRate(const CAmount& nFeePaid, size_t num_bytes)
+CFeeRate::CFeeRate(const CAmount& nFeePaid, uint32_t num_bytes)
 {
     assert(num_bytes <= uint64_t(std::numeric_limits<int64_t>::max()));
     int64_t nSize = int64_t(num_bytes);
@@ -22,7 +22,7 @@ CFeeRate::CFeeRate(const CAmount& nFeePaid, size_t num_bytes)
              
 }
 
-CAmount CFeeRate::GetFee(size_t num_bytes) const
+CAmount CFeeRate::GetFee(uint32_t num_bytes) const
 {
     assert(num_bytes <= uint64_t(std::numeric_limits<int64_t>::max()));
     int64_t nSize = int64_t(num_bytes);
