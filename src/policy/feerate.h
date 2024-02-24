@@ -46,16 +46,16 @@ public:
      *  e.g. (nFeePaid * 1e8 / 1e3) == (nFeePaid / 1e5),
      *  where 1e5 is the ratio to convert from DGB/kvB to sat/vB.
      */
-    CFeeRate(const CAmount& nFeePaid, uint32_t num_bytes);
+    CFeeRate(const CAmount& nFeePaid, size_t num_bytes);
     /**
      * Return the fee in satoshis for the given size in bytes.
      * If the calculated fee would have fractional satoshis, then the returned fee will always be rounded up to the nearest satoshi.
      */
-    CAmount GetFee(uint32_t num_bytes) const;
+    CAmount GetFee(size_t num_bytes) const;
     /**
      * Return the fee in satoshis for a size of 1000 bytes
      */
-    CAmount GetFeePerK() const { return GetFee(100000); }
+    CAmount GetFeePerK() const { return GetFee(1000); }
     friend bool operator<(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK < b.nSatoshisPerK; }
     friend bool operator>(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK > b.nSatoshisPerK; }
     friend bool operator==(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK == b.nSatoshisPerK; }
