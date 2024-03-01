@@ -13,9 +13,10 @@
 #include <script/standard.h>
 
 #include <optional>
+#include <limits>
 
 const int DEFAULT_MIN_DEPTH = 0;
-const int DEFAULT_MAX_DEPTH = 9999999;
+const int DEFAULT_MAX_DEPTH = numeric_limits<int>::max(); //set max depth to infinity
 
 //! Default for -avoidpartialspends
 static constexpr bool DEFAULT_AVOIDPARTIALSPENDS = false;
