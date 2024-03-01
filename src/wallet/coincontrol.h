@@ -16,7 +16,7 @@
 #include <limits>
 
 const int DEFAULT_MIN_DEPTH = 0;
-const int DEFAULT_MAX_DEPTH = numeric_limits<int>::max(); //set max depth to infinity
+const int DEFAULT_MAX_DEPTH = std::numeric_limits<int>::max(); //set max depth to infinity
 
 //! Default for -avoidpartialspends
 static constexpr bool DEFAULT_AVOIDPARTIALSPENDS = false;
