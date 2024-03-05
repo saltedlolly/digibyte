@@ -165,7 +165,8 @@ class WalletBackupTest(DigiByteTestFramework):
         balance3 = self.nodes[3].getbalance()
         total = balance0 + balance1 + balance2 + balance3
 
-        # Sum = 82,080,000 DGB
+        # At this point, there are 214 blocks (103 for setup, then 10 rounds, then 101.)
+        # 114 are mature, so the sum of all wallets should be 114 * 72000 = 82,080,000.
         assert_equal(total, 8208000.00000000)
 
         ##
