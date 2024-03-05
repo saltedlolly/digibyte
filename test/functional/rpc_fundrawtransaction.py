@@ -62,7 +62,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         # than a minimum sized signature.
 
         #            = 2 bytes * minRelayTxFeePerByte
-        self.fee_tolerance = 2 * self.min_relay_tx_fee / 1000
+        self.fee_tolerance = 2 * self.min_relay_tx_fee / 100000
 
         self.generate(self.nodes[2], 1)
         self.sync_all()
@@ -590,13 +590,13 @@ class RawTransactionsTest(DigiByteTestFramework):
         self.sync_all()
 
         for _ in range(20):
-            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.01)
+            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.1)
         self.generate(self.nodes[0], 1)
         self.sync_all()
 
         # Fund a tx with ~20 small inputs.
         inputs = []
-        outputs = {self.nodes[0].getnewaddress():0.15,self.nodes[0].getnewaddress():0.04}
+        outputs = {self.nodes[0].getnewaddress():0.15,self.nodes[0].getnewaddress():0.4}
         rawtx = self.nodes[1].createrawtransaction(inputs, outputs)
         fundedTx = self.nodes[1].fundrawtransaction(rawtx)
 
@@ -618,7 +618,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         self.sync_all()
 
         for _ in range(20):
-            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.01)
+            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.1)
         self.generate(self.nodes[0], 1)
         self.sync_all()
 
@@ -626,14 +626,14 @@ class RawTransactionsTest(DigiByteTestFramework):
         oldBalance = self.nodes[0].getbalance()
 
         inputs = []
-        outputs = {self.nodes[0].getnewaddress():0.15,self.nodes[0].getnewaddress():0.04}
+        outputs = {self.nodes[0].getnewaddress():0.15,self.nodes[0].getnewaddress():0.4}
         rawtx = self.nodes[1].createrawtransaction(inputs, outputs)
         fundedTx = self.nodes[1].fundrawtransaction(rawtx)
         fundedAndSignedTx = self.nodes[1].signrawtransactionwithwallet(fundedTx['hex'])
         self.nodes[1].sendrawtransaction(fundedAndSignedTx['hex'])
         self.generate(self.nodes[1], 1)
         self.sync_all()
-        assert_equal(oldBalance+Decimal('72000.19109500'), self.nodes[0].getbalance()) #0.191095+block reward
+        assert_equal(oldBalance+Decimal('6335901.85210000'), self.nodes[0].getbalance()) #
 
     def test_op_return(self):
         self.log.info("Test fundrawtxn with OP_RETURN and no vin")

@@ -10,7 +10,7 @@
 
 from test_framework.blocktools import (
     COINBASE_MATURITY,
-    COINBASE_MATURITY_ORIGINAL,
+    COINBASE_MATURITY_2,
 )
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
@@ -51,7 +51,7 @@ class GetblockstatsTest(DigiByteTestFramework):
 
         address = self.nodes[0].get_wallet_rpc('w1').getnewaddress()
 
-        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY_ORIGINAL + 1, address)
+        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY_2 + 1, address)
 
         self.nodes[0].sendtoaddress(address=address, amount=10, subtractfeefromamount=True)
         self.generate(self.nodes[0], 1)

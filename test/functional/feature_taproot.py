@@ -7,7 +7,7 @@
 
 from test_framework.blocktools import (
     COINBASE_MATURITY,
-    COINBASE_MATURITY_ORIGINAL,
+    COINBASE_MATURITY_2,
     create_coinbase,
     create_block,
     add_witness_commitment,

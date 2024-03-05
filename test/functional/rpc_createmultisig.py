@@ -11,7 +11,7 @@ import os
 
 from test_framework.blocktools import (
     COINBASE_MATURITY,
-    COINBASE_MATURITY_ORIGINAL,
+    COINBASE_MATURITY_2,
 )
 from test_framework.authproxy import JSONRPCException
 from test_framework.descriptors import descsum_create, drop_origins
@@ -120,7 +120,7 @@ class RpcCreateMultiSigTest(DigiByteTestFramework):
 
     def checkbalances(self):
         node0, node1, node2 = self.nodes
-        self.generate(node0, COINBASE_MATURITY_ORIGINAL)
+        self.generate(node0, COINBASE_MATURITY_2)
 
         bal0 = node0.getbalance()
         bal1 = node1.getbalance()

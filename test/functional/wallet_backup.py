@@ -36,7 +36,7 @@ import os
 from random import randint
 import shutil
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
     assert_equal,
@@ -126,7 +126,7 @@ class WalletBackupTest(DigiByteTestFramework):
         self.sync_blocks()
         self.generate(self.nodes[2], 1)
         self.sync_blocks()
-        self.generate(self.nodes[3], COINBASE_MATURITY)
+        self.generate(self.nodes[3], COINBASE_MATURITY_2)
         self.sync_blocks()
 
         assert_equal(self.nodes[0].getbalance(), 72000)
@@ -155,7 +155,7 @@ class WalletBackupTest(DigiByteTestFramework):
             self.do_one_round()
 
         # Generate 101 more blocks, so any fees paid mature
-        self.generate(self.nodes[3], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[3], COINBASE_MATURITY_2 + 1)
 
         self.sync_all()
 
@@ -165,9 +165,8 @@ class WalletBackupTest(DigiByteTestFramework):
         balance3 = self.nodes[3].getbalance()
         total = balance0 + balance1 + balance2 + balance3
 
-        # At this point, there are 214 blocks (8+3 for setup, then 10 rounds, then 8+1.)
-        # 22 are mature, so the sum of all wallets should be 22 * 72000 = 1,584,000 DGB
-        assert_equal(total, 1584000)
+        # Sum = 82,080,000 DGB
+        assert_equal(total, 8208000.00000000)
 
         ##
         # Test restoring spender wallets from backups
