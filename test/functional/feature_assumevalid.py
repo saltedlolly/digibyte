@@ -53,7 +53,7 @@ from test_framework.util import assert_equal
 
 from time import sleep
 
-COINBASE_MATURITY_ORIGINAL = 100
+COINBASE_MATURITY_2 = 100
 
 class BaseNode(P2PInterface):
     def send_header_for_blocks(self, new_blocks):
@@ -112,7 +112,7 @@ class AssumeValidTest(DigiByteTestFramework):
         height += 1
 
         # Bury the block 100 deep so the coinbase output is spendable
-        for _ in range(COINBASE_MATURITY_ORIGINAL):
+        for _ in range(COINBASE_MATURITY_2):
             block = create_block(self.tip, create_coinbase(height), self.block_time)
             block.solve()
             self.blocks.append(block)
@@ -162,8 +162,8 @@ class AssumeValidTest(DigiByteTestFramework):
 
         # Send blocks to node0. Block 102 will be rejected.
         self.send_blocks_until_disconnected(p2p0)
-        self.wait_until(lambda: self.nodes[0].getblockcount() >= COINBASE_MATURITY_ORIGINAL + 1)
-        assert_equal(self.nodes[0].getblockcount(), COINBASE_MATURITY_ORIGINAL + 1)
+        self.wait_until(lambda: self.nodes[0].getblockcount() >= COINBASE_MATURITY_2 + 1)
+        assert_equal(self.nodes[0].getblockcount(), COINBASE_MATURITY_2 + 1)
 
         # Send all blocks to node1. All blocks will be accepted.
         for i in range(2202):
@@ -177,8 +177,8 @@ class AssumeValidTest(DigiByteTestFramework):
         #        in start_node(2, ...) so why should it reject block 102.
         #        Commented out the parameters.
         self.send_blocks_until_disconnected(p2p2)
-        self.wait_until(lambda: self.nodes[2].getblockcount() >= COINBASE_MATURITY_ORIGINAL + 1)
-        assert_equal(self.nodes[2].getblockcount(), COINBASE_MATURITY_ORIGINAL + 1)
+        self.wait_until(lambda: self.nodes[2].getblockcount() >= COINBASE_MATURITY_2 + 1)
+        assert_equal(self.nodes[2].getblockcount(), COINBASE_MATURITY_2 + 1)
 
 
 if __name__ == '__main__':

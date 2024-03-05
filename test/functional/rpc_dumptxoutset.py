@@ -7,7 +7,7 @@
 
 from test_framework.blocktools import (
     COINBASE_MATURITY,
-    COINBASE_MATURITY_ORIGINAL,
+    COINBASE_MATURITY_2,
 )
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import assert_equal, assert_raises_rpc_error
@@ -26,7 +26,7 @@ class DumptxoutsetTest(DigiByteTestFramework):
         node = self.nodes[0]
         mocktime = node.getblockheader(node.getblockhash(0))['time'] + 1
         node.setmocktime(mocktime)
-        self.generate(node, COINBASE_MATURITY_ORIGINAL)
+        self.generate(node, COINBASE_MATURITY_2)
 
         FILENAME = 'txoutset.dat'
         out = node.dumptxoutset(FILENAME)

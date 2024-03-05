@@ -13,7 +13,7 @@ from decimal import Decimal
 
 from test_framework.blocktools import (
     COINBASE_MATURITY,
-    COINBASE_MATURITY_ORIGINAL,
+    COINBASE_MATURITY_2,
     create_block,
     create_coinbase,
 )
@@ -69,7 +69,7 @@ class CoinStatsIndexTest(DigiByteTestFramework):
         index_hash_options = ['none', 'muhash']
 
         # Generate a normal transaction and mine it
-        self.generate(node, COINBASE_MATURITY_ORIGINAL + 1)
+        self.generate(node, COINBASE_MATURITY_2 + 1)
         address = self.nodes[0].get_deterministic_priv_key().address
         node.sendtoaddress(address=address, amount=10, subtractfeefromamount=True)
         self.generate(node, 1)
