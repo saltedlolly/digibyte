@@ -633,7 +633,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         self.nodes[1].sendrawtransaction(fundedAndSignedTx['hex'])
         self.generate(self.nodes[1], 1)
         self.sync_all()
-        assert_equal(oldBalance+Decimal('6335901.85210000'), self.nodes[0].getbalance()) #
+        assert_equal(oldBalance+Decimal('72000.19109500'), self.nodes[0].getbalance()) #0.191095+block reward
 
     def test_op_return(self):
         self.log.info("Test fundrawtxn with OP_RETURN and no vin")
