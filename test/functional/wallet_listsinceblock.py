@@ -5,7 +5,7 @@
 """Test the listsinceblock RPC."""
 
 from test_framework.address import key_to_p2wpkh
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.key import ECKey
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.messages import BIP125_SEQUENCE_NUMBER
@@ -30,7 +30,7 @@ class ListSinceBlockTest(DigiByteTestFramework):
         # All nodes are in IBD from genesis, so they'll need the miner (node2) to be an outbound connection, or have
         # only one connection. (See fPreferredDownload in net_processing)
         self.connect_nodes(1, 2)
-        self.generate(self.nodes[2], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[2], COINBASE_MATURITY_2 + 1)
 
         self.test_no_blockhash()
         self.test_invalid_blockhash()
