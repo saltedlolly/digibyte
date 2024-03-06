@@ -11,7 +11,7 @@ RPCs tested are:
 """
 from collections import defaultdict
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import assert_equal, assert_raises_rpc_error
 from test_framework.wallet_util import test_address
@@ -33,7 +33,7 @@ class WalletLabelsTest(DigiByteTestFramework):
         # Note each time we call generate, all generated coins go into
         # the same address, so we call twice to get two addresses w/50 each
         self.generatetoaddress(node, nblocks=1, address=node.getnewaddress(label='coinbase'))
-        self.generatetoaddress(node, nblocks=COINBASE_MATURITY + 1, address=node.getnewaddress(label='coinbase'))
+        self.generatetoaddress(node, nblocks=COINBASE_MATURITY_2 + 1, address=node.getnewaddress(label='coinbase'))
         assert_equal(node.getbalance(), 72000 * 2)
 
         # there should be 2 address groups
@@ -105,7 +105,7 @@ class WalletLabelsTest(DigiByteTestFramework):
             label.verify(node)
             assert_equal(node.getreceivedbylabel(label.name), 2)
             label.verify(node)
-        self.generate(node, COINBASE_MATURITY + 1)
+        self.generate(node, COINBASE_MATURITY_2 + 1)
 
         # Check that setlabel can assign a label to a new unused address.
         for label in labels:
@@ -125,7 +125,7 @@ class WalletLabelsTest(DigiByteTestFramework):
                 label.add_address(multisig_address)
                 label.purpose[multisig_address] = "send"
                 label.verify(node)
-            self.generate(node, COINBASE_MATURITY + 1)
+            self.generate(node, COINBASE_MATURITY_2 + 1)
 
         # Check that setlabel can change the label of an address from a
         # different label.
