@@ -314,34 +314,34 @@ class WalletSendTest(DigiByteTestFramework):
         assert res["complete"]
 
         self.log.info("Test setting explicit fee rate")
-        res1 = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate="100", add_to_wallet=False)
-        res2 = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate="100", add_to_wallet=False)
+        res1 = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate="10000", add_to_wallet=False)
+        res2 = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate="10000", add_to_wallet=False)
         assert_equal(self.nodes[1].decodepsbt(res1["psbt"])["fee"], self.nodes[1].decodepsbt(res2["psbt"])["fee"])
 
-        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=700, add_to_wallet=False)
+        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=70000, add_to_wallet=False)
         fee = self.nodes[1].decodepsbt(res["psbt"])["fee"]
-        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.007"))
+        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.700"))
 
         # "unset" and None are treated the same for estimate_mode
-        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=200, estimate_mode="unset", add_to_wallet=False)
+        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=20000, estimate_mode="unset", add_to_wallet=False)
         fee = self.nodes[1].decodepsbt(res["psbt"])["fee"]
-        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.002"))
+        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.200"))
 
-        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=453.1, add_to_wallet=False)
+        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=45310.0, add_to_wallet=False)
         fee = self.nodes[1].decodepsbt(res["psbt"])["fee"]
-        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.004531"))
+        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.453100"))
 
-        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=300, add_to_wallet=False)
+        res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=30000, add_to_wallet=False)
         fee = self.nodes[1].decodepsbt(res["psbt"])["fee"]
-        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.003"))
+        assert_fee_amount(fee, Decimal(len(res["hex"]) / 2), Decimal("0.300"))
 
         # Test that passing fee_rate as both an argument and an option raises.
-        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=100, fee_rate=100, add_to_wallet=False,
+        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=10000, fee_rate=10000, add_to_wallet=False,
                        expect_error=(-8, "Pass the fee_rate either as an argument, or in the options object, but not both"))
 
-        assert_raises_rpc_error(-8, "Use fee_rate (sat/vB) instead of feeRate", w0.send, {w1.getnewaddress(): 1}, 6, "conservative", 1, {"feeRate": 0.01})
+        assert_raises_rpc_error(-8, "Use fee_rate (sat/vB) instead of feeRate", w0.send, {w1.getnewaddress(): 1}, 6, "conservative", 1, {"feeRate": 1.00})
 
-        assert_raises_rpc_error(-3, "Unexpected key totalFee", w0.send, {w1.getnewaddress(): 1}, 6, "conservative", 1, {"totalFee": 0.01})
+        assert_raises_rpc_error(-3, "Unexpected key totalFee", w0.send, {w1.getnewaddress(): 1}, 6, "conservative", 1, {"totalFee": 1.00})
 
         for target, mode in product([-1, 0, 1009], ["economical", "conservative"]):
             self.test_send(from_wallet=w0, to_wallet=w1, amount=1, conf_target=target, estimate_mode=mode,
@@ -361,13 +361,13 @@ class WalletSendTest(DigiByteTestFramework):
 
         # Test setting explicit fee rate just below the minimum of 1 sat/vB.
         self.log.info("Explicit fee rate raises RPC error 'fee rate too low' if fee_rate of 99.999999 is passed")
-        msg = "Fee rate (99.900 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)"
-        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=99.9, expect_error=(-4, msg))
-        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=99.9, expect_error=(-4, msg))
+        msg = "Fee rate (9999.900 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)"
+        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=9999.9, expect_error=(-4, msg))
+        self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=9999.9, expect_error=(-4, msg))
 
         self.log.info("Explicit fee rate raises if invalid fee_rate is passed")
         # Test fee_rate with zero values.
-        msg = "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)"
+        msg = "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)"
         for zero_value in [0, 0.000, 0.00000000, "0", "0.000", "0.00000000"]:
             self.test_send(from_wallet=w0, to_wallet=w1, amount=1, fee_rate=zero_value, expect_error=(-4, msg))
             self.test_send(from_wallet=w0, to_wallet=w1, amount=1, arg_fee_rate=zero_value, expect_error=(-4, msg))
