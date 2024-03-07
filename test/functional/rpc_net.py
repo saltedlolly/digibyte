@@ -47,7 +47,7 @@ class NetTest(DigiByteTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 2
-        self.extra_args = [["-minrelaytxfee=0.00001000"], ["-minrelaytxfee=0.00000500"]]
+        self.extra_args = [["-minrelaytxfee=0.00010000"], ["-minrelaytxfee=0.00010000"]]
         self.supports_cli = False
 
     def run_test(self):
@@ -95,8 +95,8 @@ class NetTest(DigiByteTestFramework):
         # the address bound to on one side will be the source address for the other node
         assert_equal(peer_info[0][0]['addrbind'], peer_info[1][0]['addr'])
         assert_equal(peer_info[1][0]['addrbind'], peer_info[0][0]['addr'])
-        assert_equal(peer_info[0][0]['minfeefilter'], Decimal("0.00050000"))
-        assert_equal(peer_info[1][0]['minfeefilter'], Decimal("0.00100000"))
+        assert_equal(peer_info[0][0]['minfeefilter'], Decimal("0.00010000"))
+        assert_equal(peer_info[1][0]['minfeefilter'], Decimal("0.00010000"))
         # check the `servicesnames` field
         for info in peer_info:
             assert_net_servicesnames(int(info[0]["services"], 0x10), info[0]["servicesnames"])
