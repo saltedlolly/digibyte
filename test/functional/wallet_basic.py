@@ -8,7 +8,7 @@ from decimal import Decimal
 from itertools import product
 from time import sleep
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
     assert_array_result,
@@ -95,7 +95,7 @@ class WalletTest(DigiByteTestFramework):
         assert_equal(walletinfo['balance'], 0)
 
         self.sync_all(self.nodes[0:3])
-        self.generate(self.nodes[1], COINBASE_MATURITY + 1, sync_fun=lambda: self.sync_all(self.nodes[0:3]))
+        self.generate(self.nodes[1], COINBASE_MATURITY_2 + 1, sync_fun=lambda: self.sync_all(self.nodes[0:3]))
 
         utxo_count = 1
         expected_balance = 72000 * utxo_count
@@ -185,8 +185,8 @@ class WalletTest(DigiByteTestFramework):
         self.nodes[1].sendrawtransaction(tx)
         assert_equal(len(self.nodes[1].listlockunspent()), 0)
 
-        # Have node1 generate 8 blocks (so node0 can recover the fee)
-        self.generate(self.nodes[1], COINBASE_MATURITY, sync_fun=lambda: self.sync_all(self.nodes[0:3]))
+        # Have node1 generate 101 blocks (so node0 can recover the fee)
+        self.generate(self.nodes[1], COINBASE_MATURITY_2 + 1, sync_fun=lambda: self.sync_all(self.nodes[0:3]))
 
         # node0 should end up with 100 btc in block rewards plus fees, but
         # minus the 21 plus fees sent to node2
@@ -227,7 +227,7 @@ class WalletTest(DigiByteTestFramework):
 
         # Send 10 DGB normal
         address = self.nodes[0].getnewaddress("test")
-        fee_per_byte = Decimal('0.050') / 1000
+        fee_per_byte = Decimal('0.10') / 1000
         self.nodes[2].settxfee(fee_per_byte * 1000)
         txid = self.nodes[2].sendtoaddress(address, 10, "", "", False)
         expectedNode2Balance -= 10
@@ -262,7 +262,7 @@ class WalletTest(DigiByteTestFramework):
         node_0_bal = self.check_fee_amount(self.nodes[0].getbalance(), node_0_bal + Decimal('10'), fee_per_byte, self.get_vsize(self.nodes[2].gettransaction(txid)['hex']))
 
         self.log.info("Test sendmany with fee_rate param (explicit fee rate in sat/vB)")
-        fee_rate_sat_vb = 100
+        fee_rate_sat_vb = 10000
         fee_rate_btc_kvb = fee_rate_sat_vb * 1e3 / 1e8
         explicit_fee_rate_btc_kvb = Decimal(fee_rate_btc_kvb) / 1000
 
@@ -277,7 +277,7 @@ class WalletTest(DigiByteTestFramework):
         assert_equal(self.nodes[0].getbalance(), node_0_bal)
 
         # Test passing fee_rate as an integer
-        amount = Decimal("0.0001")
+        amount = Decimal("0.1")
         txid = self.nodes[2].sendmany(amounts={address: amount}, fee_rate=fee_rate_sat_vb)
         self.generate(self.nodes[2], 1, sync_fun=lambda: self.sync_all(self.nodes[0:3]))
 
@@ -291,13 +291,14 @@ class WalletTest(DigiByteTestFramework):
             assert_raises_rpc_error(-8, "Unknown named parameter key", self.nodes[2].sendtoaddress, address=address, amount=1, fee_rate=1, key=1)
 
         # Test setting explicit fee rate just below the minimum.
-        self.log.info("Test sendmany raises 'fee rate too low' if fee_rate of 1.500 sat/vB is passed")
-        assert_raises_rpc_error(-6, "Fee rate (1.500 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)",
-            self.nodes[2].sendmany, amounts={address: 10}, fee_rate=1.5)
+        self.log.info("Test sendmany raises 'fee rate too low' if fee_rate of 100 sat/vB is passed")
+        assert_raises_rpc_error(-6, "Fee rate (100.000 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)",
+            self.nodes[2].sendmany, amounts={address: 10}, fee_rate=100)
 
         self.log.info("Test sendmany raises if fee_rate of 0 or -1 is passed")
-        assert_raises_rpc_error(-6, "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)",
+        assert_raises_rpc_error(-6, "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)",
             self.nodes[2].sendmany, amounts={address: 10}, fee_rate=0)
+
         assert_raises_rpc_error(-3, OUT_OF_RANGE, self.nodes[2].sendmany, amounts={address: 10}, fee_rate=-1)
 
         self.log.info("Test sendmany raises if an invalid conf_target or estimate_mode is passed")
@@ -459,7 +460,7 @@ class WalletTest(DigiByteTestFramework):
             assert prebalance > 2
             address = self.nodes[1].getnewaddress()
             amount = 3
-            fee_rate_sat_vb = 100
+            fee_rate_sat_vb = 10000
             fee_rate_btc_kvb = fee_rate_sat_vb * 1e3 / 1e8
             # Test passing fee_rate as an integer
             txid = self.nodes[2].sendtoaddress(address=address, amount=amount, fee_rate=fee_rate_sat_vb)
@@ -476,8 +477,8 @@ class WalletTest(DigiByteTestFramework):
             assert_fee_amount(fee, tx_size, Decimal(fee_rate_btc_kvb))
 
             prebalance = self.nodes[2].getbalance()
-            amount = Decimal("0.001")
-            fee_rate_sat_vb = 200
+            amount = Decimal("0.1")
+            fee_rate_sat_vb = 10000
             fee_rate_btc_kvb = fee_rate_sat_vb * 1e3 / 1e8
 
             # Test passing fee_rate as a string
@@ -501,11 +502,10 @@ class WalletTest(DigiByteTestFramework):
 
             # Test setting explicit fee rate just below the minimum.
             self.log.info("Test sendtoaddress raises 'fee rate too low' if fee_rate of 99.999 is passed")
-            assert_raises_rpc_error(-6, "Fee rate (99.999 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)",
+            assert_raises_rpc_error(-6, "Fee rate (99.999 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)", 
                 self.nodes[2].sendtoaddress, address=address, amount=1, fee_rate=99.999)
-
             self.log.info("Test sendtoaddress raises if fee_rate of 0 or -1 is passed")
-            assert_raises_rpc_error(-6, "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (100.000 sat/vB)",
+            assert_raises_rpc_error(-6, "Fee rate (0.000 sat/vB) is lower than the minimum fee rate setting (10000.000 sat/vB)",
                 self.nodes[2].sendtoaddress, address=address, amount=10, fee_rate=0)
             assert_raises_rpc_error(-3, OUT_OF_RANGE, self.nodes[2].sendtoaddress, address=address, amount=1.0, fee_rate=-1)
 
@@ -606,7 +606,7 @@ class WalletTest(DigiByteTestFramework):
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
         node0_balance = self.nodes[0].getbalance()
         # Split into two chains
-        rawtx = self.nodes[0].createrawtransaction([{"txid": singletxid, "vout": 0}], {chain_addrs[0]: node0_balance / 2 - Decimal('0.01'), chain_addrs[1]: node0_balance / 2 - Decimal('0.01')})
+        rawtx = self.nodes[0].createrawtransaction([{"txid": singletxid, "vout": 0}], {chain_addrs[0]: node0_balance / 2 - Decimal('0.1'), chain_addrs[1]: node0_balance / 2 - Decimal('0.1')})
         signedtx = self.nodes[0].signrawtransactionwithwallet(rawtx)
         singletxid = self.nodes[0].sendrawtransaction(hexstring=signedtx["hex"], maxfeerate=0)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
@@ -617,8 +617,10 @@ class WalletTest(DigiByteTestFramework):
         # So we should be able to generate exactly chainlimit txs for each original output
         sending_addr = self.nodes[1].getnewaddress()
         txid_list = []
+        #Generate 93 more blocks to have sufficient funds to cover fees, (100 block maturation)
+        self.generate(self.nodes[0], 93, sync_fun=self.no_op)
         for _ in range(chainlimit * M):
-            tx_id = self.nodes[0].sendtoaddress(sending_addr, Decimal('0.0001'))
+            tx_id = self.nodes[0].sendtoaddress(sending_addr, Decimal('0.1'))
             txid_list.append(tx_id)
 
         assert_equal(self.nodes[0].getmempoolinfo()['size'], chainlimit * M)
@@ -626,7 +628,7 @@ class WalletTest(DigiByteTestFramework):
 
         # Without walletrejectlongchains, we will still generate a txid
         # The tx will be stored in the wallet but not accepted to the mempool
-        extra_txid = self.nodes[0].sendtoaddress(sending_addr, Decimal('0.0001'))
+        extra_txid = self.nodes[0].sendtoaddress(sending_addr, Decimal('0.1'))
         assert extra_txid not in self.nodes[0].getrawmempool()
         assert extra_txid in [tx["txid"] for tx in self.nodes[0].listtransactions()]
         self.nodes[0].abandontransaction(extra_txid)
@@ -646,7 +648,7 @@ class WalletTest(DigiByteTestFramework):
 
         node0_balance = self.nodes[0].getbalance()
         # With walletrejectlongchains we will not create the tx and store it in our wallet.
-        assert_raises_rpc_error(-6, "Transaction has too long of a mempool chain", self.nodes[0].sendtoaddress, sending_addr, node0_balance - Decimal('0.01'))
+        assert_raises_rpc_error(-6, "Transaction has too long of a mempool chain", self.nodes[0].sendtoaddress, sending_addr, node0_balance - Decimal('0.1'))
 
         # Verify nothing new in wallet
         assert_equal(total_txs, len(self.nodes[0].listtransactions("*", 99999)))
@@ -710,9 +712,9 @@ class WalletTest(DigiByteTestFramework):
         self.log.info("Test send* RPCs with verbose=True")
         address = self.nodes[0].getnewaddress("test")
         txid_feeReason_one = self.nodes[2].sendtoaddress(address=address, amount=5, verbose=True)
-        assert_equal(txid_feeReason_one["fee_reason"], "Fallback fee")
+        assert_equal(txid_feeReason_one["fee_reason"], "Minimum Required Fee")
         txid_feeReason_two = self.nodes[2].sendmany(dummy='', amounts={address: 5}, verbose=True)
-        assert_equal(txid_feeReason_two["fee_reason"], "Fallback fee")
+        assert_equal(txid_feeReason_two["fee_reason"], "Minimum Required Fee")
         self.log.info("Test send* RPCs with verbose=False")
         txid_feeReason_three = self.nodes[2].sendtoaddress(address=address, amount=5, verbose=False)
         assert_equal(self.nodes[2].gettransaction(txid_feeReason_three)['txid'], txid_feeReason_three)
