@@ -10,7 +10,7 @@ Version 2 compact blocks are post-segwit (wtxids)
 import random
 
 from test_framework.blocktools import (
-    COINBASE_MATURITY,
+    COINBASE_MATURITY_2,
     NORMAL_GBT_REQUEST_PARAMS,
     add_witness_commitment,
     create_block,
@@ -165,7 +165,7 @@ class CompactBlocksTest(DigiByteTestFramework):
         block = self.build_block_on_tip(self.nodes[0])
         self.segwit_node.send_and_ping(msg_no_witness_block(block))
         assert int(self.nodes[0].getbestblockhash(), 16) == block.sha256
-        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY, self.nodes[0].getnewaddress(address_type="bech32"))
+        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY_2, self.nodes[0].getnewaddress(address_type="bech32"))
 
         total_value = block.vtx[0].vout[0].nValue
         out_value = total_value // 10
@@ -276,7 +276,7 @@ class CompactBlocksTest(DigiByteTestFramework):
 
     # This test actually causes bitcoind to (reasonably!) disconnect us, so do this last.
     def test_invalid_cmpctblock_message(self):
-        self.generate(self.nodes[0], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[0], COINBASE_MATURITY_2 + 1)
         block = self.build_block_on_tip(self.nodes[0])
 
         cmpct_block = P2PHeaderAndShortIDs()
@@ -294,7 +294,7 @@ class CompactBlocksTest(DigiByteTestFramework):
         version = test_node.cmpct_version
         node = self.nodes[0]
         # Generate a bunch of transactions.
-        self.generate(node, COINBASE_MATURITY + 1)
+        self.generate(node, COINBASE_MATURITY_2 + 1)
         num_transactions = 25
         address = node.getnewaddress()
 
