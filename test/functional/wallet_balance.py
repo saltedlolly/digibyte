@@ -8,7 +8,7 @@ import struct
 import math
 
 from test_framework.address import ADDRESS_BCRT1_UNSPENDABLE as ADDRESS_WATCHONLY
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
     assert_equal,
@@ -73,7 +73,7 @@ class WalletTest(DigiByteTestFramework):
         self.log.info("Mining blocks ...")
         self.generate(self.nodes[0], 1)
         self.generate(self.nodes[1], 1)
-        self.generatetoaddress(self.nodes[1], COINBASE_MATURITY + 1, ADDRESS_WATCHONLY)
+        self.generatetoaddress(self.nodes[1], COINBASE_MATURITY_2 + 1, ADDRESS_WATCHONLY)
 
         if not self.options.descriptors:
             # Tests legacy watchonly behavior which is not present (and does not need to be tested) in descriptor wallets
@@ -81,7 +81,7 @@ class WalletTest(DigiByteTestFramework):
             assert_equal(self.nodes[0].getwalletinfo()['balance'], 72000)
             assert_equal(self.nodes[1].getbalances()['mine']['trusted'], 72000)
 
-            assert_equal(self.nodes[0].getbalances()['watchonly']['immature'], COINBASE_MATURITY * 72000)
+            assert_equal(self.nodes[0].getbalances()['watchonly']['immature'], COINBASE_MATURITY_2 * 72000)
             assert 'watchonly' not in self.nodes[1].getbalances()
 
             assert_equal(self.nodes[0].getbalance(), 72000)
@@ -157,7 +157,7 @@ class WalletTest(DigiByteTestFramework):
             expected_balances_0 = {'mine':      {'immature':          Decimal('0E-8'),
                                                  'trusted':           Decimal('71959.99'),  # change from node 0's send
                                                  'untrusted_pending': Decimal('60.0')},
-                                   'watchonly': {'immature':          72000 * COINBASE_MATURITY,
+                                   'watchonly': {'immature':          72000 * COINBASE_MATURITY_2,
                                                  'trusted':           Decimal('72000.0'),
                                                  'untrusted_pending': Decimal('0E-8')}}
             expected_balances_1 = {'mine':      {'immature':          Decimal('0E-8'),
