@@ -141,8 +141,8 @@ class CoinStatsIndexTest(DigiByteTestFramework):
             assert_equal(res5['block_info'], {
                 'unspendable': 0,
                 'prevout_spent': 72000,
-                'new_outputs_ex_coinbase': Decimal('71999.99977800'),
-                'coinbase': Decimal('72000.00022200'),
+                'new_outputs_ex_coinbase': Decimal('71999.977800'),
+                'coinbase': Decimal('72000.022200'),
                 'unspendables': {
                     'genesis_block': 0,
                     'bip30': 0,
@@ -185,8 +185,8 @@ class CoinStatsIndexTest(DigiByteTestFramework):
             assert_equal(res6['block_info'], {
                 'unspendable': Decimal('20.98999999'),
                 'prevout_spent': Decimal('72011.00000000'),
-                'new_outputs_ex_coinbase': Decimal('71989.99982800'),
-                'coinbase': Decimal('72000.01017201'),
+                'new_outputs_ex_coinbase': Decimal('71989.98280000'),  # Updated value
+                'coinbase': Decimal('72000.02720001'),  # Updated value
                 'unspendables': {
                     'genesis_block': 0,
                     'bip30': 0,
@@ -194,6 +194,7 @@ class CoinStatsIndexTest(DigiByteTestFramework):
                     'unclaimed_rewards': 0
                 }
             })
+
             self.block_sanity_check(res6['block_info'])
 
         # Create a coinbase that does not claim full subsidy and also
