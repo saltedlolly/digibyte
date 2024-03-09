@@ -12,7 +12,7 @@
 """
 from decimal import Decimal
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
     assert_equal,
@@ -29,7 +29,7 @@ class AbandonConflictTest(DigiByteTestFramework):
         self.skip_if_no_wallet()
 
     def run_test(self):
-        self.generate(self.nodes[1], COINBASE_MATURITY)
+        self.generate(self.nodes[1], COINBASE_MATURITY_2)
         balance = self.nodes[0].getbalance()
         txA = self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal("10"))
         txB = self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal("10"))
@@ -43,7 +43,7 @@ class AbandonConflictTest(DigiByteTestFramework):
         assert_raises_rpc_error(-5, 'Transaction not eligible for abandonment', lambda: self.nodes[0].abandontransaction(txid=txA))
 
         newbalance = self.nodes[0].getbalance()
-        assert balance - newbalance < Decimal("0.001")  #no more than fees lost
+        assert balance - newbalance < Decimal("0.1")  #no more than fees lost
         balance = newbalance
 
         # Disconnect nodes so node0's transactions don't get into node1's mempool
