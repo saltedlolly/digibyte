@@ -5,7 +5,7 @@
 """Test the importprunedfunds and removeprunedfunds RPCs."""
 from decimal import Decimal
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.address import key_to_p2wpkh
 from test_framework.key import ECKey
 from test_framework.test_framework import DigiByteTestFramework
@@ -25,7 +25,7 @@ class ImportPrunedFundsTest(DigiByteTestFramework):
 
     def run_test(self):
         self.log.info("Mining blocks...")
-        self.generate(self.nodes[0], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[0], COINBASE_MATURITY_2 + 1)
 
         # address
         address1 = self.nodes[0].getnewaddress()
@@ -45,7 +45,7 @@ class ImportPrunedFundsTest(DigiByteTestFramework):
         self.sync_all()
 
         # Node 1 sync test
-        assert_equal(self.nodes[1].getblockcount(), COINBASE_MATURITY + 1)
+        assert_equal(self.nodes[1].getblockcount(), COINBASE_MATURITY_2 + 1)
 
         # Address Test - before import
         address_info = self.nodes[1].getaddressinfo(address1)

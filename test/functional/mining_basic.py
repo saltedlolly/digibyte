@@ -94,7 +94,7 @@ class MiningTest(DigiByteTestFramework):
         assert 'currentblocktx' not in mining_info
         assert 'currentblockweight' not in mining_info
         assert_equal(mining_info['difficulties']['scrypt'], Decimal('4.656542373906925E-10'))
-        assert_equal(mining_info['networkhashps'], Decimal('0.1333333333333333'))
+        assert_equal(mining_info['networkhashps'], Decimal('0.1344444444444444'))
         assert_equal(mining_info['pooledtx'], 0)
 
         self.log.info("getblocktemplate: Test default witness commitment")
