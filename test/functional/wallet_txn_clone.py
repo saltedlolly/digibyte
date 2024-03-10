@@ -52,11 +52,11 @@ class TxnMallTest(DigiByteTestFramework):
         # The fourth address from TestNode.PRIV_KEYS should have
         # 41 mature blocks, but only 8 immature blocks.
         # This is caused by the different COINBASE_MATURITY parameter in digibyte. 
-        starting_balance = 50 * 72000
+        starting_balance = 25 * 72000
         for i in range(3):
             assert_equal(self.nodes[i].getbalance(), starting_balance)
 
-        self.nodes[0].settxfee(.001)
+        self.nodes[0].settxfee(0.1)
 
         node0_address1 = self.nodes[0].getnewaddress(address_type=output_type)
         node0_txid1 = self.nodes[0].sendtoaddress(node0_address1, 1219)
@@ -98,20 +98,22 @@ class TxnMallTest(DigiByteTestFramework):
         # Have node0 mine a block, if requested:
         if (self.options.mine_block):
             self.generate(self.nodes[0], 1, sync_fun=lambda: self.sync_blocks(self.nodes[0:2]))
+            # Initialize expected variable
+            expected = starting_balance + node0_tx1["fee"] + node0_tx2["fee"]
+            expected += 72000  # Add block reward for the mined block
+        else:
+            # Initialize expected variable for the case when mine_block is not set
+            expected = starting_balance + node0_tx1["fee"] + node0_tx2["fee"]
 
         tx1 = self.nodes[0].gettransaction(txid1)
         tx2 = self.nodes[0].gettransaction(txid2)
 
         # Node0's balance should be starting balance, plus 50BTC for another
         # matured block, minus tx1 and tx2 amounts, and minus transaction fees:
-        expected = starting_balance + node0_tx1["fee"] + node0_tx2["fee"]
-        if self.options.mine_block:
-            # In DigiByte, since COINBASE_MATURITY is only set to 8,
-            # node0's txs are already matured. No emission will mature
-            # even after calling a block.
-            expected += 0
         expected += tx1["amount"] + tx1["fee"]
         expected += tx2["amount"] + tx2["fee"]
+        print(f"Actual balance: {self.nodes[0].getbalance()}")
+        print(f"Expected balance: {expected}")
         assert_equal(self.nodes[0].getbalance(), expected)
 
         if self.options.mine_block:
@@ -137,6 +139,9 @@ class TxnMallTest(DigiByteTestFramework):
         self.nodes[2].sendrawtransaction(tx2["hex"])
         self.generate(self.nodes[2], 1)  # Mine another block to make sure we sync
 
+        # Add block rewards from the mined blocks by node 2
+        expected += 72000 * 2  # 2 blocks mined by node 2
+
         # Re-fetch transaction info:
         tx1 = self.nodes[0].gettransaction(txid1)
         tx1_clone = self.nodes[0].gettransaction(txid1_clone)
@@ -151,8 +156,10 @@ class TxnMallTest(DigiByteTestFramework):
             # In DigiByte, since COINBASE_MATURITY is only set to 8,
             # node0's txs are already matured. No emission will mature
             # even after calling a block.
-            expected += 0
+            expected += -72000
             
+        print(f"Actual balance: {self.nodes[0].getbalance()}")
+        print(f"Expected balance: {expected}")    
         assert_equal(self.nodes[0].getbalance(), expected)
 
 

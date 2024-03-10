@@ -61,7 +61,7 @@ class RPCPackagesTest(DigiByteTestFramework):
         for _ in range(3):
             coin = self.coins.pop()
             rawtx = node.createrawtransaction([{"txid": coin["txid"], "vout": 0}],
-                {self.address : coin["amount"] - Decimal("0.01")})
+                {self.address : coin["amount"] - Decimal("0.1")})
             signedtx = node.signrawtransactionwithkey(hexstring=rawtx, privkeys=self.privkeys)
             assert signedtx["complete"]
             testres = node.testmempoolaccept([signedtx["hex"]])
@@ -86,7 +86,7 @@ class RPCPackagesTest(DigiByteTestFramework):
         """
         node = self.nodes[0]
         inputs = [{"txid": parent_txid, "vout": n}]
-        my_value = parent_value - Decimal("0.01")
+        my_value = parent_value - Decimal("0.1")
         outputs = {self.address : my_value}
         rawtx = node.createrawtransaction(inputs, outputs)
         prevtxs = [{
@@ -119,7 +119,7 @@ class RPCPackagesTest(DigiByteTestFramework):
         self.log.info("Check testmempoolaccept tells us when some transactions completed validation successfully")
         coin = self.coins.pop()
         tx_bad_sig_hex = node.createrawtransaction([{"txid": coin["txid"], "vout": 0}],
-                                           {self.address : coin["amount"] - Decimal("0.01")})
+                                           {self.address : coin["amount"] - Decimal("0.1")})
         tx_bad_sig = tx_from_hex(tx_bad_sig_hex)
         testres_bad_sig = node.testmempoolaccept(self.independent_txns_hex + [tx_bad_sig_hex])
         # By the time the signature for the last transaction is checked, all the other transactions
@@ -134,7 +134,7 @@ class RPCPackagesTest(DigiByteTestFramework):
         self.log.info("Check testmempoolaccept reports txns in packages that exceed max feerate")
         coin = self.coins.pop()
         tx_high_fee_raw = node.createrawtransaction([{"txid": coin["txid"], "vout": 0}],
-                                           {self.address : coin["amount"] - Decimal("0.999")})
+                                           {self.address : coin["amount"] - Decimal("99.999")})
         tx_high_fee_signed = node.signrawtransactionwithkey(hexstring=tx_high_fee_raw, privkeys=self.privkeys)
         assert tx_high_fee_signed["complete"]
         tx_high_fee = tx_from_hex(tx_high_fee_signed["hex"])
