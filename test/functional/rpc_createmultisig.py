@@ -10,7 +10,6 @@ import json
 import os
 
 from test_framework.blocktools import (
-    COINBASE_MATURITY,
     COINBASE_MATURITY_2,
 )
 from test_framework.authproxy import JSONRPCException
@@ -128,7 +127,7 @@ class RpcCreateMultiSigTest(DigiByteTestFramework):
 
         height = node0.getblockchaininfo()["blocks"]
         assert 150 < height < 350
-        total = (height - COINBASE_MATURITY) * 72000
+        total = (height - COINBASE_MATURITY_2) * 72000
         assert bal1 == 0
         assert bal2 == self.moved
         assert bal0 + bal1 + bal2 == total
