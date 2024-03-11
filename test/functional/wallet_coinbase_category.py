@@ -7,7 +7,7 @@
 Tests listtransactions, listsinceblock, and gettransaction.
 """
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.util import (
     assert_array_result
@@ -37,24 +37,25 @@ class CoinbaseCategoryTest(DigiByteTestFramework):
         self.generatetoaddress(self.nodes[0], 1, address)
         hash = self.nodes[0].getbestblockhash()
         txid = self.nodes[0].getblock(hash)["tx"][0]
+        
 
         # Coinbase transaction is immature after 1 confirmation
         self.assert_category("immature", address, txid, 0)
 
-        # Mine another 8-1 blocks on top
-        self.generate(self.nodes[0], COINBASE_MATURITY - 1)
-        # Coinbase transaction is still immature after 7 confirmations
-        self.assert_category("immature", address, txid, 7)
+        # Mine another 99 blocks on top
+        self.generate(self.nodes[0], COINBASE_MATURITY_2 - 1)
+        # Coinbase transaction is still immature after 100 confirmations
+        self.assert_category("immature", address, txid, 99)
 
         # Mine one more block
         self.generate(self.nodes[0], 1)
         # Coinbase transaction is now matured, so category is "generate"
-        self.assert_category("generate", address, txid, 8)
+        self.assert_category("generate", address, txid, 100)
 
         # Orphan block that paid to address
         self.nodes[0].invalidateblock(hash)
         # Coinbase transaction is now orphaned
-        self.assert_category("orphan", address, txid, 8)
+        self.assert_category("orphan", address, txid, 100)
 
 if __name__ == '__main__':
     CoinbaseCategoryTest().main()
