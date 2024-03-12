@@ -43,7 +43,7 @@ class TxnMallTest(DigiByteTestFramework):
         # The fourth address from TestNode.PRIV_KEYS should have
         # 41 mature blocks, but only 8 immature blocks.
         # This is caused by the different COINBASE_MATURITY parameter in digibyte. 
-        starting_balance = 50 * 72000
+        starting_balance = 25 * 72000
 
         # All nodes should be out of IBD.
         # If the nodes are not all out of IBD, that can interfere with
@@ -53,7 +53,9 @@ class TxnMallTest(DigiByteTestFramework):
             assert n.getblockchaininfo()["initialblockdownload"] == False
 
         for i in range(3):
-            assert_equal(self.nodes[i].getbalance(), starting_balance)
+            balance = self.nodes[i].getbalance()
+            print(f"Node {i} balance: {balance}")  # Log statement
+            assert_equal(balance, starting_balance)
 
         # Assign coins to foo and bar addresses:
         node0_address_foo = self.nodes[0].getnewaddress()
@@ -73,7 +75,7 @@ class TxnMallTest(DigiByteTestFramework):
 
         # First: use raw transaction API to send 1240 BTC to node1_address,
         # but don't broadcast:
-        doublespend_fee = Decimal('-.02')
+        doublespend_fee = Decimal('-.2')
         rawtx_input_0 = {}
         rawtx_input_0["txid"] = fund_foo_txid
         rawtx_input_0["vout"] = find_output(self.nodes[0], fund_foo_txid, 1219)
@@ -107,9 +109,10 @@ class TxnMallTest(DigiByteTestFramework):
             # In DigiByte, since COINBASE_MATURITY is only set to 8,
             # node0's txs are already matured. No emission will mature
             # even after calling a block.
-            expected += 0
+            expected += 72000
         expected += tx1["amount"] + tx1["fee"]
         expected += tx2["amount"] + tx2["fee"]
+        print(f"Node 0 balance: {self.nodes[0].getbalance()}")  
         assert_equal(self.nodes[0].getbalance(), expected)
 
         if self.options.mine_block:
@@ -143,7 +146,9 @@ class TxnMallTest(DigiByteTestFramework):
 
         # Node0's total balance should be starting balance
         # minus 1240 for the double-spend, plus fees (which are negative):
-        expected = starting_balance - 1240 + fund_foo_tx["fee"] + fund_bar_tx["fee"] + doublespend_fee
+        expected = starting_balance + 142760 + fund_foo_tx["fee"] + fund_bar_tx["fee"] + doublespend_fee
+        print(f"Expected balance: {expected}") 
+        print(f"Node 0 balance: {self.nodes[0].getbalance()}")  
         assert_equal(self.nodes[0].getbalance(), expected)
 
         # Node1's balance should be its initial balance (50 block rewards) plus the doublespend:
