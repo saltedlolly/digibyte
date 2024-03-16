@@ -2,7 +2,7 @@ package=sqlite
 $(package)_version=3450200
 $(package)_download_path=https://sqlite.org/2024/
 $(package)_file_name=sqlite-autoconf-$($(package)_version).tar.gz
-$(package)_sha256_hash=486748abfb16abd8af664e3a5f03b228e5f124682b0c942e157644bf6fff7d10
+$(package)_sha256_hash=1b02c58a711d15b50da8a1089e0f8807ebbdf3e674c714100eda9a03a69ac758
 
 define $(package)_set_vars
 $(package)_config_opts=--disable-shared --disable-readline --disable-dynamic-extensions --enable-option-checking
