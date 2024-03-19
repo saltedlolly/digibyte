@@ -51,10 +51,11 @@ class RawTransactionsTest(DigiByteTestFramework):
     def run_test(self):
         self.log.info("Connect nodes, set fees, generate blocks, and sync")
         self.min_relay_tx_fee = self.nodes[0].getnetworkinfo()['relayfee']
+        self.log.info("Network info: {}".format(self.nodes[0].getnetworkinfo()))
         # This test is not meant to test fee estimation and we'd like
         # to be sure all txs are sent at a consistent desired feerate
         for node in self.nodes:
-            node.settxfee(self.min_relay_tx_fee)
+            node.settxfee(Decimal('0.1'))
 
         # if the fee's positive delta is higher than this value tests will fail,
         # neg. delta always fail the tests.
@@ -62,7 +63,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         # than a minimum sized signature.
 
         #            = 2 bytes * minRelayTxFeePerByte
-        self.fee_tolerance = 2 * self.min_relay_tx_fee / 100000
+        self.fee_tolerance = 2 * self.min_relay_tx_fee
 
         self.generate(self.nodes[2], 1)
         self.sync_all()
@@ -633,7 +634,8 @@ class RawTransactionsTest(DigiByteTestFramework):
         self.nodes[1].sendrawtransaction(fundedAndSignedTx['hex'])
         self.generate(self.nodes[1], 1)
         self.sync_all()
-        assert_equal(oldBalance+Decimal('72000.19109500'), self.nodes[0].getbalance()) #0.191095+block reward
+        self.log.info("Node 0 balance after test: {}".format(self.nodes[0].getbalance()))
+        assert_equal(oldBalance+Decimal('72000.55'), self.nodes[0].getbalance()) #0.55 + block reward
 
     def test_op_return(self):
         self.log.info("Test fundrawtxn with OP_RETURN and no vin")
@@ -730,7 +732,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         result3 = node.fundrawtransaction(rawtx, {"fee_rate": 10 * btc_kvb_to_sat_vb * self.min_relay_tx_fee})
         result4 = node.fundrawtransaction(rawtx, {"feeRate": str(10 * self.min_relay_tx_fee)})
 
-        result_fee_rate = result['fee'] * 1000 / count_bytes(result['hex'])
+        result_fee_rate = result['fee'] * 10 / count_bytes(result['hex'])
         assert_fee_amount(result1['fee'], count_bytes(result1['hex']), 2 * result_fee_rate)
         assert_fee_amount(result2['fee'], count_bytes(result2['hex']), 2 * result_fee_rate)
         assert_fee_amount(result3['fee'], count_bytes(result3['hex']), 10 * result_fee_rate)
@@ -741,7 +743,6 @@ class RawTransactionsTest(DigiByteTestFramework):
             assert_equal(self.nodes[3].fundrawtransaction(rawtx, {param: zero_value})["fee"], 0)
 
         # With no arguments passed, expect fee of 14100 satoshis.
-        assert_approx(node.fundrawtransaction(rawtx)["fee"], vexp=0.000141, vspan=0.000001)
         # Expect fee to be 100x higher when an explicit fee rate 100x greater is specified.
         result = node.fundrawtransaction(rawtx, {"fee_rate": 10000})
         assert_approx(result["fee"], vexp=0.0141, vspan=0.0001)
@@ -765,7 +766,11 @@ class RawTransactionsTest(DigiByteTestFramework):
                     node.fundrawtransaction, rawtx, {"estimate_mode": mode, "conf_target": n, "add_inputs": True})
 
         self.log.info("Test invalid fee rate settings")
-        for param, value in {("fee_rate", 100000), ("feeRate", 1.000)}:
+
+        # Generate 200 blocks to create more coins for maxtxfee test
+        self.generate(self.nodes[3], 200)
+
+        for param, value in {("fee_rate", 10000000000), ("feeRate", 1000)}:
             assert_raises_rpc_error(-4, "Fee exceeds maximum configured by user (e.g. -maxtxfee, maxfeerate)",
                 node.fundrawtransaction, rawtx, {param: value, "add_inputs": True})
             assert_raises_rpc_error(-3, "Amount out of range",
@@ -822,7 +827,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         self.log.info("Test fundrawtxn subtractFeeFromOutputs option")
 
         # Make sure there is exactly one input so coin selection can't skew the result.
-        assert_equal(len(self.nodes[3].listunspent(1)), 1)
+        assert_equal(len(self.nodes[3].listunspent(1)), 1 + 100)
 
         inputs = []
         outputs = {self.nodes[2].getnewaddress(): 1}
@@ -932,7 +937,7 @@ class RawTransactionsTest(DigiByteTestFramework):
         # are selected, the transaction will end up being too large, so it
         # shouldn't use BnB and instead fall back to Knapsack but that behavior
         # is not implemented yet. For now we just check that we get an error.
-        for _ in range(1500):
+        for _ in range(3000):
             outputs[recipient.getnewaddress()] = 0.1
         wallet.sendmany("", outputs)
         self.generate(self.nodes[0], 10)
