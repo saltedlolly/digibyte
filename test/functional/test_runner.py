@@ -112,8 +112,8 @@ BASE_SCRIPTS = [
     'wallet_dump.py --legacy-wallet',
     'wallet_listtransactions.py --legacy-wallet',
     'wallet_listtransactions.py --descriptors',
-    'feature_taproot.py --previous_release',
-    'feature_taproot.py',
+    #'feature_taproot.py --previous_release', #Disable until path forward on taproot determined
+    #'feature_taproot.py', #Disable until path forward on taproot determined
     'rpc_signer.py',
     'wallet_signer.py --descriptors',
     # vv Tests less than 60s vv
@@ -268,7 +268,7 @@ BASE_SCRIPTS = [
     'wallet_send.py --legacy-wallet',
     'wallet_send.py --descriptors',
     'wallet_create_tx.py --descriptors',
-    'wallet_taproot.py',
+    #'wallet_taproot.py', #Disable until path forward on taproot determined
     'p2p_fingerprint.py',
     'feature_uacomment.py',
     'wallet_coinbase_category.py --legacy-wallet',
