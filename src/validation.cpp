@@ -57,6 +57,7 @@
 #include <numeric>
 #include <optional>
 #include <string>
+#include <cstring> // for memcpy
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -3098,9 +3099,9 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block)
         pindexNew->BuildSkip();
     }
 
+    // Use memcpy to copy the entire array at once.
     if (pindexNew->pprev) {
-        for (unsigned i = 0; i < NUM_ALGOS_IMPL; i++)
-            pindexNew->lastAlgoBlocks[i] = pindexNew->pprev->lastAlgoBlocks[i];
+        memcpy(pindexNew->lastAlgoBlocks, pindexNew->pprev->lastAlgoBlocks, sizeof(pindexNew->lastAlgoBlocks[0]) * NUM_ALGOS_IMPL);
         pindexNew->lastAlgoBlocks[pindexNew->GetAlgo()] = pindexNew;
     }
 
@@ -3897,9 +3898,9 @@ bool BlockManager::LoadBlockIndex(
         if (ShutdownRequested()) return false;
         CBlockIndex* pindex = item.second;
 
+        // Use memcpy to copy the entire array at once.
         if (pindex->pprev) {
-            for (unsigned i = 0; i < NUM_ALGOS_IMPL; i++)
-              pindex->lastAlgoBlocks[i] = pindex->pprev->lastAlgoBlocks[i];
+            memcpy(pindex->lastAlgoBlocks, pindex->pprev->lastAlgoBlocks, sizeof(pindex->lastAlgoBlocks));
             pindex->lastAlgoBlocks[pindex->GetAlgo()] = pindex;
         }
         
