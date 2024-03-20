@@ -23,7 +23,7 @@ from test_framework.util import (
 class AbandonConflictTest(DigiByteTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
-        self.extra_args = [["-minrelaytxfee=0.00001"], []]
+        self.extra_args = [["-minrelaytxfee=0.001"], []]
 
     def skip_test_if_missing_module(self):
         self.skip_if_no_wallet()
@@ -60,25 +60,25 @@ class AbandonConflictTest(DigiByteTestFramework):
         inputs.append({"txid": txB, "vout": nB})
         outputs = {}
 
-        outputs[self.nodes[0].getnewaddress()] = Decimal("14.99998")
+        outputs[self.nodes[0].getnewaddress()] = Decimal("14.998")
         outputs[self.nodes[1].getnewaddress()] = Decimal("5")
         signed = self.nodes[0].signrawtransactionwithwallet(self.nodes[0].createrawtransaction(inputs, outputs))
         txAB1 = self.nodes[0].sendrawtransaction(signed["hex"])
 
         # Identify the 14.99998btc output
-        nAB = next(tx_out["vout"] for tx_out in self.nodes[0].gettransaction(txAB1)["details"] if tx_out["amount"] == Decimal("14.99998"))
+        nAB = next(tx_out["vout"] for tx_out in self.nodes[0].gettransaction(txAB1)["details"] if tx_out["amount"] == Decimal("14.998"))
 
         #Create a child tx spending AB1 and C
         inputs = []
         inputs.append({"txid": txAB1, "vout": nAB})
         inputs.append({"txid": txC, "vout": nC})
         outputs = {}
-        outputs[self.nodes[0].getnewaddress()] = Decimal("24.9996")
+        outputs[self.nodes[0].getnewaddress()] = Decimal("24.996")
         signed2 = self.nodes[0].signrawtransactionwithwallet(self.nodes[0].createrawtransaction(inputs, outputs))
         txABC2 = self.nodes[0].sendrawtransaction(signed2["hex"])
 
         # Create a child tx spending ABC2
-        signed3_change = Decimal("24.999")
+        signed3_change = Decimal("24.99")
         inputs = [{"txid": txABC2, "vout": 0}]
         outputs = {self.nodes[0].getnewaddress(): signed3_change}
         signed3 = self.nodes[0].signrawtransactionwithwallet(self.nodes[0].createrawtransaction(inputs, outputs))
@@ -92,7 +92,7 @@ class AbandonConflictTest(DigiByteTestFramework):
 
         # Restart the node with a higher min relay fee so the parent tx is no longer in mempool
         # TODO: redo with eviction
-        self.restart_node(0, extra_args=["-minrelaytxfee=0.0001"])
+        self.restart_node(0, extra_args=["-minrelaytxfee=0.01"])
         assert self.nodes[0].getmempoolinfo()['loaded']
 
         # Verify txs no longer in either node's mempool
@@ -138,21 +138,23 @@ class AbandonConflictTest(DigiByteTestFramework):
         # But its child tx remains abandoned
         self.nodes[0].sendrawtransaction(signed["hex"])
         newbalance = self.nodes[0].getbalance()
-        assert_equal(newbalance, balance - Decimal("20") + Decimal("14.99998"))
+        self.log.info(f"New balance: {newbalance}")
+        self.log.info(f"New balance: {balance}")
+        assert_equal(newbalance, balance - Decimal("20") + Decimal("14.998"))
         balance = newbalance
 
         # Send child tx again so it is unabandoned
         self.nodes[0].sendrawtransaction(signed2["hex"])
         newbalance = self.nodes[0].getbalance()
-        assert_equal(newbalance, balance - Decimal("10") - Decimal("14.99998") + Decimal("24.9996"))
+        assert_equal(newbalance, balance - Decimal("10") - Decimal("14.998") + Decimal("24.996"))
         balance = newbalance
 
         # Remove using high relay fee again
-        self.restart_node(0, extra_args=["-minrelaytxfee=0.0001"])
+        self.restart_node(0, extra_args=["-minrelaytxfee=0.01"])
         assert self.nodes[0].getmempoolinfo()['loaded']
         assert_equal(len(self.nodes[0].getrawmempool()), 0)
         newbalance = self.nodes[0].getbalance()
-        assert_equal(newbalance, balance - Decimal("24.9996"))
+        assert_equal(newbalance, balance - Decimal("24.996"))
         balance = newbalance
 
         self.log.info("Test transactions conflicted by a double spend")
