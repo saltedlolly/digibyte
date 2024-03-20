@@ -3101,7 +3101,7 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block)
 
     // Use memcpy to copy the entire array at once.
     if (pindexNew->pprev) {
-        memcpy(pindexNew->lastAlgoBlocks, pindexNew->pprev->lastAlgoBlocks, sizeof(pindexNew->lastAlgoBlocks[0]) * NUM_ALGOS_IMPL);
+        memcpy(pindexNew->lastAlgoBlocks, pindexNew->pprev->lastAlgoBlocks, sizeof(pindexNew->lastAlgoBlocks));
         pindexNew->lastAlgoBlocks[pindexNew->GetAlgo()] = pindexNew;
     }
 
