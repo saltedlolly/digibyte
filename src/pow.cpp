@@ -239,7 +239,7 @@ unsigned int GetNextWorkRequiredV4(const CBlockIndex* pindexLast, const Consensu
         {
             bnNew *= (100 + params.nLocalTargetAdjustment);
             bnNew /= 100;
-            if (i % 16 == 0 && bnNew > UintToArith256(params.powLimit)) {
+            if (bnNew > UintToArith256(params.powLimit)) {
               bnNew = UintToArith256(params.powLimit);
               break;
             }            
