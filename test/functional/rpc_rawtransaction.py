@@ -15,7 +15,7 @@ Test the following RPCs:
 from collections import OrderedDict
 from decimal import Decimal
 
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.messages import (
     CTransaction,
     tx_from_hex,
@@ -75,7 +75,7 @@ class RawTransactionsTest(DigiByteTestFramework):
     def run_test(self):
         self.log.info("Prepare some coins for multiple *rawtransaction commands")
         self.generate(self.nodes[2], 1)
-        self.generate(self.nodes[0], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[0], COINBASE_MATURITY_2 + 1)
         for amount in [1.5, 1.0, 5.0]:
             self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), amount)
         self.sync_all()
@@ -327,20 +327,22 @@ class RawTransactionsTest(DigiByteTestFramework):
         assert_equal(rawTxSigned['complete'], True)
         # Fee 10,000 satoshis, ~100 b transaction, fee rate should land around 100 sat/byte = 0.00100000 BTC/kB
         # Thus, testmempoolaccept should reject
-        testres = self.nodes[2].testmempoolaccept([rawTxSigned['hex']], 0.00001000)[0]
+        testres = self.nodes[2].testmempoolaccept([rawTxSigned['hex']], 0.0010000)[0]
+        self.log.info(f"testmempoolaccept result: {testres}")
         assert_equal(testres['allowed'], False)
         assert_equal(testres['reject-reason'], 'max-fee-exceeded')
         # and sendrawtransaction should throw
-        assert_raises_rpc_error(-25, fee_exceeds_max, self.nodes[2].sendrawtransaction, rawTxSigned['hex'], 0.00001000)
+        assert_raises_rpc_error(-25, fee_exceeds_max, self.nodes[2].sendrawtransaction, rawTxSigned['hex'], 0.00100000)
         # and the following calls should both succeed
         testres = self.nodes[2].testmempoolaccept(rawtxs=[rawTxSigned['hex']])[0]
+        self.log.info(f"testmempoolaccept result (no maxfeerate): {testres}")
         assert_equal(testres['allowed'], True)
         self.nodes[2].sendrawtransaction(hexstring=rawTxSigned['hex'])
 
         # Test a transaction with a large fee.
-        txId = self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 1.0)
+        txId = self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 100.0)
         rawTx = self.nodes[0].getrawtransaction(txId, True)
-        vout = next(o for o in rawTx['vout'] if o['value'] == Decimal('1.00000000'))
+        vout = next(o for o in rawTx['vout'] if o['value'] == Decimal('100.00000000'))
 
         self.sync_all()
         inputs = [{"txid": txId, "vout": vout['n']}]
@@ -352,14 +354,16 @@ class RawTransactionsTest(DigiByteTestFramework):
         # Fee 2,000,000 satoshis, ~100 b transaction, fee rate should land around 20,000 sat/byte = 0.20000000 BTC/kB
         # Thus, testmempoolaccept should reject
         testres = self.nodes[2].testmempoolaccept([rawTxSigned['hex']])[0]
+        self.log.info(f"testmempoolaccept result (high fee): {testres}")
         assert_equal(testres['allowed'], False)
         assert_equal(testres['reject-reason'], 'max-fee-exceeded')
         # and sendrawtransaction should throw
         assert_raises_rpc_error(-25, fee_exceeds_max, self.nodes[2].sendrawtransaction, rawTxSigned['hex'])
         # and the following calls should both succeed
-        testres = self.nodes[2].testmempoolaccept(rawtxs=[rawTxSigned['hex']], maxfeerate='0.20000000')[0]
+        testres = self.nodes[2].testmempoolaccept(rawtxs=[rawTxSigned['hex']], maxfeerate='2000.000')[0]
+        self.log.info(f"testmempoolaccept result (high fee, correct maxfeerate): {testres}")
         assert_equal(testres['allowed'], True)
-        self.nodes[2].sendrawtransaction(hexstring=rawTxSigned['hex'], maxfeerate='0.20000000')
+        self.nodes[2].sendrawtransaction(hexstring=rawTxSigned['hex'], maxfeerate='2000.00')
 
         self.log.info("Test sendrawtransaction/testmempoolaccept with tx already in the chain")
         self.generate(self.nodes[2], 1)
