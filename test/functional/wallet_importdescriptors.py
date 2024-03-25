@@ -16,7 +16,7 @@ variants.
   and test the values returned."""
 
 from test_framework.address import key_to_p2pkh
-from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.blocktools import COINBASE_MATURITY_2
 from test_framework.test_framework import DigiByteTestFramework
 from test_framework.descriptors import descsum_create
 from test_framework.util import (
@@ -74,7 +74,7 @@ class ImportDescriptorsTest(DigiByteTestFramework):
         assert_equal(wpriv.getwalletinfo()['keypoolsize'], 0)
 
         self.log.info('Mining coins')
-        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY + 1, w0.getnewaddress())
+        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY_2 + 1, w0.getnewaddress())
 
         # RPC importdescriptors -----------------------------------------------
 
@@ -404,9 +404,9 @@ class ImportDescriptorsTest(DigiByteTestFramework):
                      address,
                      solvable=True,
                      ismine=True)
-        txid = w0.sendtoaddress(address, 71999.9997770)
+        txid = w0.sendtoaddress(address, 71999.97770)
         self.generatetoaddress(self.nodes[0], 6, w0.getnewaddress())
-        tx = wpriv.createrawtransaction([{"txid": txid, "vout": 0}], {w0.getnewaddress(): 71999.99})
+        tx = wpriv.createrawtransaction([{"txid": txid, "vout": 0}], {w0.getnewaddress(): 71999.9})
         rawtxinfo = wpriv.decoderawtransaction(tx)
         signed_tx = wpriv.signrawtransactionwithwallet(tx)
         w1.sendrawtransaction(signed_tx['hex'])
@@ -581,7 +581,7 @@ class ImportDescriptorsTest(DigiByteTestFramework):
         w0.sendtoaddress(addr, 10)
         self.generate(self.nodes[0], 1)
         # It is standard and would relay.
-        txid = wmulti_priv_big.sendtoaddress(w0.getnewaddress(), 9.999)
+        txid = wmulti_priv_big.sendtoaddress(w0.getnewaddress(), 9.9)
         decoded = wmulti_priv_big.gettransaction(txid=txid, verbose=True)['decoded']
         # 20 sigs + dummy + witness script
         assert_equal(len(decoded['vin'][0]['txinwitness']), 22)
