@@ -223,7 +223,7 @@ std::shared_ptr<CWallet> LoadWalletInternal(interfaces::Chain& chain, const std:
 
         // Legacy wallets are being deprecated, warn if the loaded wallet is legacy
         if (!wallet->IsWalletFlagSet(WALLET_FLAG_DESCRIPTORS)) {
-            warnings.push_back(_("Wallet loaded successfully. The legacy wallet type is being deprecated and support for opening legacy wallets will be removed in the future."));
+            warnings.push_back(_("The legacy wallet type is being deprecated and support for opening legacy wallets will be removed in the future."));
         }
         
         AddWallet(wallet);
