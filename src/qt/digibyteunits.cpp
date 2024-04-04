@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+// Source: https://dgbwiki.com/index.php?title=DigiByte#Subunits
+
 #include <qt/digibyteunits.h>
 
 #include <QStringList>
