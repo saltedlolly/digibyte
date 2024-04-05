@@ -1319,7 +1319,7 @@ if test x$enable_wallet != xno; then
 
     dnl Check for sqlite3
     if test "x$use_sqlite" != "xno"; then
-      PKG_CHECK_MODULES([SQLITE], [sqlite3 >= 3.7.17], [have_sqlite=yes], [have_sqlite=no])
+      PKG_CHECK_MODULES([SQLITE], [sqlite3 >= 3.45.2], [have_sqlite=yes], [have_sqlite=no])
     fi
     AC_MSG_CHECKING([whether to build wallet with support for sqlite])
     if test "x$use_sqlite" = "xno"; then
