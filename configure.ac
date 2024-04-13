@@ -101,7 +101,7 @@ AC_PATH_TOOL(GCOV, gcov)
 AC_PATH_TOOL(LLVM_COV, llvm-cov)
 AC_PATH_PROG(LCOV, lcov)
 dnl Python 3.6 is specified in .python-version and should be used if available, see doc/dependencies.md
-AC_PATH_PROGS([PYTHON], [python3.6 python3.7 python3.8 python3.9 python3 python])
+AC_PATH_PROGS([PYTHON], [python3.9 python3.10 python3.11 python3.12 python3 python])
 AC_PATH_PROG(GENHTML, genhtml)
 AC_PATH_PROG([GIT], [git])
 AC_PATH_PROG(CCACHE,ccache)
@@ -1319,7 +1319,7 @@ if test x$enable_wallet != xno; then
 
     dnl Check for sqlite3
     if test "x$use_sqlite" != "xno"; then
-      PKG_CHECK_MODULES([SQLITE], [sqlite3 >= 3.7.17], [have_sqlite=yes], [have_sqlite=no])
+      PKG_CHECK_MODULES([SQLITE], [sqlite3 >= 3.45.2], [have_sqlite=yes], [have_sqlite=no])
     fi
     AC_MSG_CHECKING([whether to build wallet with support for sqlite])
     if test "x$use_sqlite" = "xno"; then
@@ -1403,7 +1403,7 @@ fi
 if test x$use_boost = xyes; then
 
   dnl Check for Boost headers
-  AX_BOOST_BASE([1.64.0],[],[AC_MSG_ERROR([Boost is not available!])])
+  AX_BOOST_BASE([1.84.0],[],[AC_MSG_ERROR([Boost is not available!])])
   if test x$want_boost = xno; then
     AC_MSG_ERROR([[only libdigibyteconsensus can be built without boost]])
   fi
