@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+// Source: https://dgbwiki.com/index.php?title=DigiByte#Subunits
+
 #include <qt/digibyteunits.h>
 
 #include <QStringList>
@@ -48,7 +50,7 @@ QString DigiByteUnits::longName(int unit)
     case DGB: return QString("DGB");
     case mDGB: return QString("mDGB");
     case uDGB: return QString::fromUtf8("µDGB (bits)");
-    case SAT: return QString("Satoshi (sat)");
+    case SAT: return QString("DigiSatoshi (sat)");
     default: return QString("???");
     }
 }
@@ -70,7 +72,7 @@ QString DigiByteUnits::description(int unit)
     case DGB: return QString("DigiBytes");
     case mDGB: return QString("Milli-DigiBytes (1 / 1" THIN_SP_UTF8 "000)");
     case uDGB: return QString("Micro-DigiBytes (bits) (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-    case SAT: return QString("Satoshi (sat) (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+    case SAT: return QString("DigiSatoshi (sat) (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
     default: return QString("???");
     }
 }
