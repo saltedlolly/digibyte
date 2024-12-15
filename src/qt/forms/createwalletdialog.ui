@@ -142,7 +142,6 @@
   <tabstop>encrypt_wallet_checkbox</tabstop>
   <tabstop>disable_privkeys_checkbox</tabstop>
   <tabstop>blank_wallet_checkbox</tabstop>
-  <tabstop>descriptor_checkbox</tabstop>
   <tabstop>external_signer_checkbox</tabstop>
  </tabstops>
  <resources/>
