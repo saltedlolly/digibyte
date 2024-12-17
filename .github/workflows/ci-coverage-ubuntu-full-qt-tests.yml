@@ -11,7 +11,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
+      - name: Cache APT Packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            /var/cache/apt
+            /var/lib/apt/lists
+          key: v1-${{ runner.os }}-apt-${{ hashFiles('**/ci-coverage-ubuntu-full-qt-tests.yml') }}
+          restore-keys: |
+            v1-${{ runner.os }}-apt-
+            v1-${{ runner.os }}-
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pip3
+          key: v1-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            v1-${{ runner.os }}-pip-
+            v1-${{ runner.os }}-
+
       - name: Install Basic Build Dependencies
         run: |
           sudo apt-get update
@@ -30,6 +52,17 @@ jobs:
       
       - name: Install BerkleyDB
         run: ./contrib/install_db4.sh `pwd` --enable-cxx
+
+      - name: Cache depends build
+        uses: actions/cache@v3
+        with:
+          path: |
+            depends/built
+            depends/sdk-sources
+            depends/x86_64-linux-gnu
+          key: v1-${{ runner.os }}-depends-${{ hashFiles('depends/Makefile') }}
+          restore-keys: |
+            v1-${{ runner.os }}-depends-
 
       - name: Build Dependencies
         run: |
