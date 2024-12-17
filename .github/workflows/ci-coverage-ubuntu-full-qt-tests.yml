@@ -6,9 +6,8 @@ on:
     branches: [ develop, master ]
 
 jobs:
-  build:
+  dependencies:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -44,12 +43,11 @@ jobs:
           libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools \
           libqrencode-dev
 
-      - name: Install pypandoc
-        run: pip3 install pypandoc
+      - name: Install Python Packages
+        run: |
+          pip3 install pypandoc
+          pip3 install digibyte_scrypt
 
-      - name: Install scrypt for Python3
-        run: pip3 install digibyte_scrypt
-      
       - name: Install BerkleyDB
         run: ./contrib/install_db4.sh `pwd` --enable-cxx
 
@@ -69,6 +67,12 @@ jobs:
           cd depends
           make -j3 HOST=x86_64-linux-gnu
           cd ..
+
+  build:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
       - name: Auto Generate
         run: ./autogen.sh
