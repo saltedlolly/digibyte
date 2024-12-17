@@ -44,7 +44,7 @@ jobs:
         run: ./autogen.sh
 
       - name: Configure
-        run: CONFIG_SITE=$PWD/depends/x86_64-linux-gnu/share/config.site ./configure --with-gui=yes
+        run: CONFIG_SITE=$PWD/depends/x86_64-linux-gnu/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes
 
       - name: Make
         run: make -j3
