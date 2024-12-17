@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-        matrix:
-          os: [x86_64-linux-gnu]
 
     steps:
       - uses: actions/checkout@v2
