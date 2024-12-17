@@ -1,3 +1,5 @@
+# Testing
+
 The [pull-tester](/qa/pull-tester/) folder contains a script to call
 multiple tests from the [rpc-tests](/qa/rpc-tests/) folder.
 
@@ -5,41 +7,49 @@ Every pull request to the digibyte repository is built and run through
 the regression test suite. You can also run all or only individual
 tests locally.
 
-Test dependencies
-=================
+## Test dependencies
+
 Before running the tests, the following must be installed.
 
-Unix
-----
+## Unix
+
 The python3-zmq library is required. On Ubuntu or Debian it can be installed via:
-```
-sudo apt-get install python3-zmq
-```
 
-OS X
-------
-```
-pip3 install pyzmq
-```
+    ```bash
+    sudo apt-get install python3-zmq
+    ```
 
-Running tests
-=============
+## OS X
+
+    ```bash
+    pip3 install pyzmq
+    ```
+
+## Running tests
 
 You can run any single test by calling
 
+    ```bash
     qa/pull-tester/rpc-tests.py <testname>
+    ```
 
 Or you can run any combination of tests by calling
 
+    ```bash
     qa/pull-tester/rpc-tests.py <testname1> <testname2> <testname3> ...
+    ```
 
 Run the regression test suite with
 
+    ```bash
     qa/pull-tester/rpc-tests.py
+    ```
 
 Run all possible tests with
 
+    ```bash
     qa/pull-tester/rpc-tests.py -extended
+    ```
 
 By default, tests will be run in parallel. To specify how many jobs to run,
 append `-parallel=n` (default n=4).
@@ -48,17 +58,17 @@ If you want to create a basic coverage report for the rpc test suite, append `--
 
 Possible options, which apply to each individual test run:
 
-```
-  -h, --help            show this help message and exit
-  --nocleanup           Leave digibyteds and test.* datadir on exit or error
-  --noshutdown          Don't stop digibyteds after the test execution
-  --srcdir=SRCDIR       Source directory containing digibyted/digibyte-cli
-                        (default: ../../src)
-  --tmpdir=TMPDIR       Root directory for datadirs
-  --tracerpc            Print out all RPC calls as they are made
-  --coveragedir=COVERAGEDIR
-                        Write tested RPC commands into this directory
-```
+    ```bash
+    -h, --help            show this help message and exit
+    --nocleanup           Leave digibyteds and test.* datadir on exit or error
+    --noshutdown          Don't stop digibyteds after the test execution
+    --srcdir=SRCDIR       Source directory containing digibyted/digibyte-cli
+                            (default: ../../src)
+    --tmpdir=TMPDIR       Root directory for datadirs
+    --tracerpc            Print out all RPC calls as they are made
+    --coveragedir=COVERAGEDIR
+                            Write tested RPC commands into this directory
+    ```
 
 If you set the environment variable `PYTHON_DEBUG=1` you will get some debug
 output (example: `PYTHON_DEBUG=1 qa/pull-tester/rpc-tests.py wallet`).
@@ -75,13 +85,13 @@ test state.
 If you get into a bad state, you should be able
 to recover with:
 
-```bash
-rm -rf cache
-killall digibyted
-```
+    ```bash
+    rm -rf cache
+    killall digibyted
+    ```
 
-Writing tests
-=============
+## Writing tests
+
 You are encouraged to write tests for new or existing features.
 Further information about the test framework and individual rpc
 tests is found in [qa/rpc-tests](/qa/rpc-tests).
