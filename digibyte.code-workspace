@@ -6,6 +6,7 @@
 	],
 	"settings": {
 		"files.associations": {
+			"*.tfvars": "terraform",
 			"chrono": "cpp",
 			"initializer_list": "cpp",
 			"cctype": "cpp",
@@ -31,7 +32,8 @@
 			"thread": "cpp",
 			"cinttypes": "cpp",
 			"typeindex": "cpp",
-			"ios": "cpp"
+			"ios": "cpp",
+			"*.ipp": "cpp"
 		},
 		"github.copilot.advanced": {
 			"projectDirectories": [

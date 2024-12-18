@@ -6,7 +6,7 @@
 
 import random
 from test_framework.blocktools import (
-    COINBASE_MATURITY,
+    COINBASE_MATURITY_2,
 )
 from decimal import Decimal
 from test_framework.test_framework import DigiByteTestFramework
@@ -274,11 +274,11 @@ class WalletTaprootTest(DigiByteTestFramework):
                 assert_equal(addr_g, addr_r)
             boring_balance = int(self.boring.getbalance() * 100000000)
             to_amnt = random.randrange(1000000, boring_balance)
-            self.boring.sendtoaddress(address=addr_g, amount=Decimal(to_amnt) / 100000000, subtractfeefromamount=True, fee_rate=110)
+            self.boring.sendtoaddress(address=addr_g, amount=Decimal(to_amnt) / 100000000, subtractfeefromamount=True, fee_rate=11000)
             self.generatetoaddress(self.nodes[0], 1, self.boring.getnewaddress(), sync_fun=self.no_op)
             test_balance = int(self.rpc_online.getbalance() * 100000000)
             ret_amnt = random.randrange(100000, test_balance)
-            res = self.rpc_online.sendtoaddress(address=self.boring.getnewaddress(), amount=Decimal(ret_amnt) / 100000000, subtractfeefromamount=True, fee_rate=300)
+            res = self.rpc_online.sendtoaddress(address=self.boring.getnewaddress(), amount=Decimal(ret_amnt) / 100000000, subtractfeefromamount=True, fee_rate=30000)
             self.generatetoaddress(self.nodes[0], 1, self.boring.getnewaddress(), sync_fun=self.no_op)
             assert(self.rpc_online.gettransaction(res)["confirmations"] > 0)
 
@@ -309,7 +309,7 @@ class WalletTaprootTest(DigiByteTestFramework):
             self.generatetoaddress(self.nodes[0], 1, self.boring.getnewaddress(), sync_fun=self.no_op)
             test_balance = int(self.psbt_online.getbalance() * 100000000)
             ret_amnt = random.randrange(100000, test_balance)
-            psbt = self.psbt_online.walletcreatefundedpsbt([], [{self.boring.getnewaddress(): Decimal(ret_amnt) / 100000000}], None, {"subtractFeeFromOutputs":[0], "fee_rate": 300})['psbt']
+            psbt = self.psbt_online.walletcreatefundedpsbt([], [{self.boring.getnewaddress(): Decimal(ret_amnt) / 100000000}], None, {"subtractFeeFromOutputs":[0], "fee_rate": 30000})['psbt']
             res = self.psbt_offline.walletprocesspsbt(psbt)
             assert(res['complete'])
             rawtx = self.nodes[0].finalizepsbt(res['psbt'])['hex']
@@ -344,9 +344,29 @@ class WalletTaprootTest(DigiByteTestFramework):
         self.psbt_online = self.nodes[0].get_wallet_rpc("psbt_online")
         self.psbt_offline = self.nodes[1].get_wallet_rpc("psbt_offline")
 
+        self.log.info("Connecting nodes...")
+        self.connect_nodes(0, 1)
+        self.connect_nodes(1, 2)
+        self.connect_nodes(0, 2)
+
+        # Wait for connections to be fully established
+        self.wait_until(lambda: all(len(node.getpeerinfo()) >= 2 for node in self.nodes[0:3]))
+
         self.log.info("Mining blocks...")
         gen_addr = self.boring.getnewaddress()
-        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY + 1, gen_addr, sync_fun=self.no_op)
+        self.generatetoaddress(self.nodes[0], COINBASE_MATURITY_2 + 1, gen_addr)
+        self.sync_all()
+        
+        # Ensure sufficient balance before proceeding
+        balance = self.boring.getbalance()
+        if balance == 0:
+            self.log.info("Initial balance zero, generating more blocks...")
+            self.generatetoaddress(self.nodes[0], 101, gen_addr)
+            self.sync_all()
+            balance = self.boring.getbalance()
+            
+        if balance == 0:
+            raise RuntimeError("Insufficient funds in boring wallet after block generation")
 
         self.do_test(
             "tr(XPRV)",
