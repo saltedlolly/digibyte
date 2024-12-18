@@ -6,7 +6,6 @@
 # Test Taproot softfork (BIPs 340-342)
 
 from test_framework.blocktools import (
-    COINBASE_MATURITY,
     COINBASE_MATURITY_2,
     create_coinbase,
     create_block,
@@ -598,8 +597,8 @@ SIG_POP_BYTE = {"failure": {"sign": byte_popper(default_sign)}}
 SINGLE_SIG = {"inputs": [getter("sign")]}
 SIG_ADD_ZERO = {"failure": {"sign": zero_appender(default_sign)}}
 
-DUST_LIMIT = 600
-MIN_FEE = 1300000
+DUST_LIMIT = 60000
+MIN_FEE = 130000000
 
 # === Actual test cases ===
 
@@ -1462,7 +1461,7 @@ class TaprootTest(DigiByteTestFramework):
     def run_test(self):
         # Post-taproot activation tests go first (pre-taproot tests' blocks are invalid post-taproot).
         self.log.info("Post-activation tests...")
-        self.generate(self.nodes[1], COINBASE_MATURITY + 1)
+        self.generate(self.nodes[1], COINBASE_MATURITY_2 + 1)
         self.test_spenders(self.nodes[1], spenders_taproot_active(), input_counts=[1, 2, 2, 2, 2, 3])
 
         # Re-connect nodes in case they have been disconnected
