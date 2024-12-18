@@ -155,13 +155,14 @@ class BlockchainTest(DigiByteTestFramework):
            'taproot': {
                'type': 'bip9',
                'bip9': {
-                   'status': 'defined',
-                   'start_time': 4070908800,
-                   'timeout': 4099766400,
+                   'status': 'active',
+                   'start_time': -1,
+                   'timeout': 9223372036854775807,
                    'since': 0,
-                   'min_activation_height': 0,
+                   'min_activation_height': 0
                },
-               'active': False
+               'height': 0,
+               'active': True
            }
         })
 
