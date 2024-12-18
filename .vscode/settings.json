@@ -27,15 +27,5 @@
     "typeindex": "cpp",
     "ios": "cpp"
   },
-  "cmake.ignoreCMakeListsMissing": true,
-  "boost-test-adapter-robaho.tests": [
-    {
-      "testExecutables": [
-        {
-          "glob": "**/*{_test,_test.exe}"
-        }
-      ],
-      "debugConfig": "Test Config"
-    }
-  ],
+  "cmake.ignoreCMakeListsMissing": true
 }

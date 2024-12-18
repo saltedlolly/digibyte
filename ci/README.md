@@ -1,8 +1,8 @@
-## CI Scripts
+# CI Scripts
 
 This directory contains scripts for each build step in each build stage.
 
-### Running a Stage Locally
+## Running a Stage Locally
 
 Be aware that the tests will be built and run in-place, so please run at your own risk.
 If the repository is not a fresh git clone, you might have to clean files from previous builds or test runs first.
@@ -17,21 +17,21 @@ system in a virtual machine with a Linux operating system of your choice.
 To allow for a wide range of tested environments, but also ensure reproducibility to some extent, the test stage
 requires `docker` to be installed. To install all requirements on Ubuntu, run
 
-```
-sudo apt install docker.io bash
-```
+    ```bash
+    sudo apt install docker.io bash
+    ```
 
 To run the default test stage,
 
-```
-./ci/test_run_all.sh
-```
+    ```bash
+    ./ci/test_run_all.sh
+    ```
 
 To run the test stage with a specific configuration,
 
-```
-FILE_ENV="./ci/test/00_setup_env_arm.sh" ./ci/test_run_all.sh
-```
+    ```bash
+    FILE_ENV="./ci/test/00_setup_env_arm.sh" ./ci/test_run_all.sh
+    ```
 
 ### Configurations
 
@@ -51,9 +51,9 @@ is used as the default configuration with fallback values.
 It is also possible to force a specific configuration without modifying the
 file. For example,
 
-```
-MAKEJOBS="-j1" FILE_ENV="./ci/test/00_setup_env_arm.sh" ./ci/test_run_all.sh
-```
+    ```bash
+    MAKEJOBS="-j1" FILE_ENV="./ci/test/00_setup_env_arm.sh" ./ci/test_run_all.sh
+    ```
 
 The files starting with `0n` (`n` greater than 0) are the scripts that are run
 in order.
