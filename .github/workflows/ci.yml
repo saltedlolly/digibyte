@@ -91,7 +91,7 @@ jobs:
           make -j$(nproc)
 
       - name: Run Tests
-        run: make check -j3
+        run: make check -j$(nproc)
 
       - name: Upload Test Suite Log
         uses: actions/upload-artifact@v3
