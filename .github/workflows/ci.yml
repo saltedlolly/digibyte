@@ -6,11 +6,7 @@ name: DigiByte CI
 
 on:
   pull_request:
-  push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+    branches: [ develop, master ]
 
 concurrency:
   group: ${{ github.event_name != 'pull_request' && github.run_id || github.ref }}
@@ -87,7 +83,7 @@ jobs:
       - name: Configure and Build
         run: |
           ./autogen.sh
-          CONFIG_SITE=$PWD/depends/x86_64-linux-gnu/share/config.site /configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
+          CONFIG_SITE=$PWD/depends/x86_64-linux-gnu/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
           make -j$(nproc)
 
       - name: Run Tests
