@@ -81,7 +81,7 @@ jobs:
         if: steps.cache-depends.outputs.cache-hit != 'true'
         run: |
           cd depends
-          make $(nproc) HOST=x86_64-linux-gnu
+          make -j$(nproc) HOST=x86_64-linux-gnu
           cd ..
 
       - name: Configure and Build
