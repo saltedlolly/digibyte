@@ -11,6 +11,11 @@
 #
 name: "CodeQL Advanced"
 
+# Add this concurrency configuration right after the 'name' field
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: ["develop", "master", "release**/**/*"]
@@ -50,6 +55,8 @@ jobs:
           - language: python
             build-mode: none
           - language: javascript-typescript
+            build-mode: none
+          - language: actions
             build-mode: none
         # CodeQL supports the following values keywords for 'language': 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift'
         # Use `c-cpp` to analyze code written in C, C++ or both
