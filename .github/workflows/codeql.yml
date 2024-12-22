@@ -76,7 +76,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          queries: ${{ matrix.language != 'actions' && 'security-extended,security-and-quality' || 'security-and-quality' }}
+          queries: ${{ matrix.language != 'actions' && 'security-extended,security-and-quality' || '' }}
           dependency-caching: true
 
       # If the analyze step fails for one of the languages you are analyzing with
