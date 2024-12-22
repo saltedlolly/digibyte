@@ -19,8 +19,14 @@ concurrency:
 on:
   push:
     branches: ["develop", "master", "release**/**/*"]
+    paths-ignore:
+      - 'depends/**'
+      - 'contrib/**'
   pull_request:
     branches: ["develop", "master", "release**/**/*"]
+    paths-ignore:
+      - 'depends/**'
+      - 'contrib/**'
   schedule:
     - cron: "0 0 * * 0"
 
@@ -78,6 +84,7 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
           queries: ${{ matrix.language != 'actions' && 'security-extended,security-and-quality' || '' }}
           dependency-caching: true
+          config-file: ./.github/codeql/codeql-config.yml
 
       # If the analyze step fails for one of the languages you are analyzing with
       # "We were unable to automatically build your code", modify the matrix above
