@@ -11,15 +11,22 @@ concurrency:
 on:
   pull_request:
     branches: [develop, master]
+  push:
+    branches: [feature/**]
 
 env:
   CI_FAILFAST_TEST_LEAVE_DANGLING: 1 # GHA does not care about dangling processes and setting this variable avoids killing the CI script itself on error
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set up Python 3.10.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.9
 
       - name: Cache pip
         id: cache-pip
@@ -31,14 +38,6 @@ jobs:
           key: v1-${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: v1-${{ runner.os }}-pip-
 
-      - name: Cache BerkeleyDB
-        id: cache-db4
-        uses: actions/cache@v3
-        with:
-          path: db4
-          key: v1-${{ runner.os }}-db4-${{ hashFiles('contrib/install_db4.sh') }}
-          restore-keys: v1-${{ runner.os }}-db4-
-
       - name: Cache depends build
         id: cache-depends
         uses: actions/cache@v3
@@ -48,42 +47,27 @@ jobs:
             depends/sources
             depends/sdk-sources
             depends/work
-            depends/x86_64-linux-gnu
+            depends/arch64-apple-darwin*
           key: v1-${{ runner.os }}-depends-${{ hashFiles('depends/Makefile') }}
           restore-keys: |
             v1-${{ runner.os }}-depends-
-
-      - name: Install Build Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config python3 \
-          libssl-dev bsdmainutils libevent-dev \
-          libboost-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev \
-          libsqlite3-dev \
-          libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools \
-          libqrencode-dev python3-zmq
 
       - name: Install Python Packages
         if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           pip3 install pypandoc digibyte_scrypt pyzmq
 
-      - name: Install BerkeleyDB
-        if: steps.cache-db4.outputs.cache-hit != 'true'
-        run: |
-          ./contrib/install_db4.sh `pwd` --enable-cxx
-
       - name: Build Dependencies
         if: steps.cache-depends.outputs.cache-hit != 'true'
         run: |
           cd depends
-          make -j$(nproc) HOST=x86_64-linux-gnu
+          make -j$(nproc) HOST=aarch64-apple-darwin24.2.0
           cd ..
 
       - name: Configure and Build
         run: |
           ./autogen.sh
-          CONFIG_SITE=$PWD/depends/x86_64-linux-gnu/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
+          CONFIG_SITE=$PWD/depends/aarch64-apple-darwin24.2.0/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
           make -j$(nproc)
 
       - name: Run Tests
@@ -94,4 +78,4 @@ jobs:
         if: failure()
         with:
           name: test-suite-log
-          path: test-suite.log
+          path: src/test-suite.log
