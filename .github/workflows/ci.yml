@@ -52,6 +52,9 @@ jobs:
           restore-keys: |
             v1-${{ runner.os }}-depends-
 
+      - name: Install brew dependencies
+        run: brew install autoconf automake libtool pkg-config pandoc
+
       - name: Install Python Packages
         if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
@@ -61,17 +64,17 @@ jobs:
         if: steps.cache-depends.outputs.cache-hit != 'true'
         run: |
           cd depends
-          make -j$(nproc) HOST=aarch64-apple-darwin24.2.0
+          make -j2 HOST=aarch64-apple-darwin24.2.0
           cd ..
 
       - name: Configure and Build
         run: |
           ./autogen.sh
           CONFIG_SITE=$PWD/depends/aarch64-apple-darwin24.2.0/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
-          make -j$(nproc)
+          make -j2
 
       - name: Run Tests
-        run: make check -j$(nproc)
+        run: make check
 
       - name: Upload Test Suite Log
         uses: actions/upload-artifact@v3
