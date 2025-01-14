@@ -139,6 +139,9 @@ jobs:
           CONFIG_SITE=$PWD/depends/aarch64-apple-darwin24.2.0/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
           make -j2
 
+          # Run Tests
+          make check
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
