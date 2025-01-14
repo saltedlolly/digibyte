@@ -17,13 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: ["develop", "master", "release**/**/*"]
-    paths-ignore:
-      - 'depends/**'
-      - 'contrib/**'
   pull_request:
-    branches: ["develop", "master", "release**/**/*"]
+    branches: ["develop"]
     paths-ignore:
       - 'depends/**'
       - 'contrib/**'
