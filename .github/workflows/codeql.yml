@@ -105,18 +105,6 @@ jobs:
       - if: matrix.build-mode == 'manual'
         shell: bash
         run: |
-          # Cache management from your existing workflow
-          sudo apt-get update
-          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config python3 \
-          libssl-dev bsdmainutils libevent-dev \
-          libboost-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev \
-          libsqlite3-dev \
-          libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools \
-          libqrencode-dev python3-zmq
-
-          # Install BerkeleyDB
-          ./contrib/install_db4.sh `pwd` --enable-cxx
-
           # Build Dependencies
           cd depends
           make -j2 HOST=aarch64-apple-darwin24.2.0
