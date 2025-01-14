@@ -71,21 +71,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10.9
-		if: matrix.build-mode == 'manual'
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.9
-
-      - name: Install brew dependencies
-		if: matrix.build-mode == 'manual'
-        run: brew install autoconf automake libtool pkg-config pandoc
-  
-      - name: Install Python Packages
-        if: matrix.build-mode == 'manual'
-        run: |
-          pip3 install pypandoc digibyte_scrypt pyzmq
-
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -95,6 +80,21 @@ jobs:
           queries: ${{ matrix.language != 'actions' && 'security-extended,security-and-quality' || '' }}
           dependency-caching: true
           config-file: ./.github/codeql/codeql-config.yml
+
+      - if: matrix.build-mode == 'manual'
+        name: Set up Python 3.10.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.9
+
+      - if: matrix.build-mode == 'manual'
+        name: Install brew dependencies
+        run: brew install autoconf automake libtool pkg-config pandoc
+  
+      - if: matrix.build-mode == 'manual'
+        name: Install Python Packages
+        run: |
+          pip3 install pypandoc digibyte_scrypt pyzmq
 
       # If the analyze step fails for one of the languages you are analyzing with
       # "We were unable to automatically build your code", modify the matrix above
@@ -126,7 +126,6 @@ jobs:
           ./autogen.sh
           CONFIG_SITE=$PWD/depends/aarch64-apple-darwin24.2.0/share/config.site ./configure --with-bdb --with-sqlite --with-gui=yes --with-zmq
           make -j2
-2
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
