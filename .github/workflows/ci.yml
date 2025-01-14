@@ -13,7 +13,7 @@ concurrency:
 
 on:
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "master", "main"]
 
 env:
   CI_FAILFAST_TEST_LEAVE_DANGLING: 1 # GHA does not care about dangling processes and setting this variable avoids killing the CI script itself on error
