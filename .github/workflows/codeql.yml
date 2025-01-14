@@ -11,9 +11,11 @@
 #
 name: "CodeQL Advanced"
 
-# Add this concurrency configuration right after the 'name' field
+permissions:
+  contents: read
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.event_name != 'pull_request' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 on:
