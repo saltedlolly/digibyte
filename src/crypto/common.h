@@ -108,4 +108,4 @@ uint64_t static inline CountBits(uint64_t x)
     return ret;
 }
 
-#endif // DIGIBYTE_CRYPTO_COMMON_
+#endif // DIGIBYTE_CRYPTO_COMMON_H
