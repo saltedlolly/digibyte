@@ -8,9 +8,46 @@
 #include <chainparams.h>
 #include <validation.h>
 
+// Include whatever header actually declares LogPrintf in your codebase.
+// In DigiByte, it might be "logging.h" or "util/system.h". Adjust as needed:
+#include <logging.h> // or #include <util/system.h> or #include "util.h"
+
 /**
- * CChain implementation
+ * CBlockIndex default constructor
  */
+CBlockIndex::CBlockIndex()
+{
+    for (unsigned i = 0; i < NUM_ALGOS_IMPL; i++) {
+        lastAlgoBlocks[i] = nullptr;
+    }
+}
+
+/**
+ * CBlockIndex constructor that copies from a block header.
+ * We can safely call LogPrintf here because we are in a .cpp file that includes logging.
+ */
+CBlockIndex::CBlockIndex(const CBlockHeader& block)
+    : nVersion(block.nVersion),
+      hashMerkleRoot(block.hashMerkleRoot),
+      nTime(block.nTime),
+      nBits(block.nBits),
+      nNonce(block.nNonce)
+{
+    // Initialize lastAlgoBlocks to null.
+    for (unsigned i = 0; i < NUM_ALGOS_IMPL; i++) {
+        lastAlgoBlocks[i] = nullptr;
+    }
+
+    // Determine raw algo index from version bits:
+    int rawAlgo = block.GetAlgo(); // This returns ALGO_UNKNOWN if it doesn't match recognized bits
+    if (rawAlgo >= 0 && rawAlgo < NUM_ALGOS_IMPL) {
+        lastAlgoBlocks[rawAlgo] = this;
+    } else {
+        // We can log this occurrence:
+        LogPrintf("CBlockIndex ctor: ALGO_UNKNOWN in block version=0x%08x\n", block.nVersion);
+    }
+}
+
 void CChain::SetTip(CBlockIndex *pindex) {
     if (pindex == nullptr) {
         vChain.clear();
@@ -65,12 +102,41 @@ const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {
 CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime, int height) const
 {
     std::pair<int64_t, int> blockparams = std::make_pair(nTime, height);
-    std::vector<CBlockIndex*>::const_iterator lower = std::lower_bound(vChain.begin(), vChain.end(), blockparams,
-        [](CBlockIndex* pBlock, const std::pair<int64_t, int>& blockparams) -> bool { return pBlock->GetBlockTimeMax() < blockparams.first || pBlock->nHeight < blockparams.second; });
+    auto lower = std::lower_bound(
+        vChain.begin(), vChain.end(), blockparams,
+        [](CBlockIndex* pBlock, const std::pair<int64_t, int>& bp) {
+            return pBlock->GetBlockTimeMax() < bp.first || pBlock->nHeight < bp.second;
+        }
+    );
     return (lower == vChain.end() ? nullptr : *lower);
 }
 
-/** Turn the lowest '1' bit in the binary representation of a number into a '0'. */
+/**
+ * Return recognized mining algo for this block, forcibly mapping blocks
+ * below height 145,000 to ALGO_SCRYPT. If none recognized, logs a warning.
+ */
+int CBlockIndex::GetAlgo() const
+{
+    // Force older blocks (before multi-algo) to scrypt
+    if (nHeight < 145000) {
+        return ALGO_SCRYPT;
+    }
+
+    // Otherwise parse from (nVersion & BLOCK_VERSION_ALGO).
+    switch (nVersion & BLOCK_VERSION_ALGO) {
+        case BLOCK_VERSION_SCRYPT:   return ALGO_SCRYPT;
+        case BLOCK_VERSION_SHA256D:  return ALGO_SHA256D;
+        case BLOCK_VERSION_GROESTL:  return ALGO_GROESTL;
+        case BLOCK_VERSION_SKEIN:    return ALGO_SKEIN;
+        case BLOCK_VERSION_QUBIT:    return ALGO_QUBIT;
+        case BLOCK_VERSION_ODO:      return ALGO_ODO;
+    }
+    // If not recognized, log it:
+    LogPrintf("Warning: block at height=%d has unrecognized nVersion=0x%08x\n", nHeight, nVersion);
+    return ALGO_UNKNOWN;
+}
+
+/** Turn the lowest '1' bit in the binary representation of a number into '0'. */
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
 /** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
@@ -78,10 +144,9 @@ int static inline GetSkipHeight(int height) {
     if (height < 2)
         return 0;
 
-    // Determine which height to jump back to. Any number strictly lower than height is acceptable,
-    // but the following expression seems to perform well in simulations (max 110 steps to go back
-    // up to 2**18 blocks).
-    return (height & 1) ? InvertLowestOne(InvertLowestOne(height - 1)) + 1 : InvertLowestOne(height);
+    return (height & 1)
+         ? InvertLowestOne(InvertLowestOne(height - 1)) + 1
+         : InvertLowestOne(height);
 }
 
 const CBlockIndex* CBlockIndex::GetAncestor(int height) const
@@ -124,18 +189,16 @@ void CBlockIndex::BuildSkip()
 
 int GetAlgoWorkFactor(int nHeight, int algo) 
 {
-    if (nHeight < Params().GetConsensus().multiAlgoDiffChangeTarget)
-    {
+    if (nHeight < Params().GetConsensus().multiAlgoDiffChangeTarget) {
         return 1;
     }
 
     switch (algo)
     {
         case ALGO_SHA256D:
-            return 1; 
-        // work factor = absolute work ratio * optimisation factor
+            return 1;
         case ALGO_SCRYPT:
-            return 1024 * 4;
+            return 1024 * 4; // etc...
         case ALGO_GROESTL:
             return 64 * 8;
         case ALGO_SKEIN:
@@ -155,33 +218,26 @@ arith_uint256 GetBlockProofBase(const CBlockIndex& block)
     bnTarget.SetCompact(block.nBits, &fNegative, &fOverflow);
     if (fNegative || fOverflow || bnTarget == 0)
         return 0;
-    // We need to compute 2**256 / (bnTarget+1), but we can't represent 2**256
-    // as it's too large for a arith_uint256. However, as 2**256 is at least as large
-    // as bnTarget+1, it is equal to ((2**256 - bnTarget - 1) / (bnTarget+1)) + 1,
-    // or ~bnTarget / (nTarget+1) + 1.
+
+    // 2**256 / (bnTarget+1)
     return (~bnTarget / (bnTarget + 1)) + 1;
 }
 
-// DGB 6.14.1 GetBlock Proof
 arith_uint256 GetBlockProof(const CBlockIndex& block)
 {
     CBlockHeader header = block.GetBlockHeader();
     int nHeight = block.nHeight;
     const Consensus::Params& params = Params().GetConsensus();
 
-    if (nHeight < params.workComputationChangeTarget)
-    {
+    if (nHeight < params.workComputationChangeTarget) {
         arith_uint256 bnBlockWork = GetBlockProofBase(block);
         uint32_t nAlgoWork = GetAlgoWorkFactor(nHeight, header.GetAlgo());
         return bnBlockWork * nAlgoWork;
-    }
-    else
-    {
-        // Compute the geometric mean of the block targets for each individual algorithm.
+    } else {
+        // Compute the geometric mean across all active algos
         arith_uint256 bnAvgTarget(1);
 
-        for (int i = 0; i < NUM_ALGOS_IMPL; i++)
-        {
+        for (int i = 0; i < NUM_ALGOS_IMPL; i++) {
             if (!IsAlgoActive(block.pprev, params, i))
                 continue;
             unsigned int nBits = GetNextWorkRequired(block.pprev, &header, params, i);
@@ -196,11 +252,9 @@ arith_uint256 GetBlockProof(const CBlockIndex& block)
             // that all intermediate values fit in 256-bit integers.
             bnAvgTarget *= bnTarget.ApproxNthRoot(NUM_ALGOS);
         }
-        // see comment in GetProofBase
         arith_uint256 bnRes = (~bnAvgTarget / (bnAvgTarget + 1)) + 1;
-        // Scale to roughly match the old work calculation
+        // scale
         bnRes <<= 7;
-
         return bnRes;
     }
 }
@@ -211,14 +265,11 @@ arith_uint256 GetBlockProof(const CBlockIndex& block, int algo)
     int nHeight = block.nHeight;
     const Consensus::Params& params = Params().GetConsensus();
 
-    if (nHeight < params.workComputationChangeTarget)
-    {
+    if (nHeight < params.workComputationChangeTarget) {
         arith_uint256 bnBlockWork = GetBlockProofBase(block);
         uint32_t nAlgoWork = GetAlgoWorkFactor(nHeight, header.GetAlgo());
         return bnBlockWork * nAlgoWork;
-    }
-    else
-    {
+    } else {
         if (!IsAlgoActive(block.pprev, params, algo))
             return 0;
         unsigned int nBits = GetNextWorkRequired(block.pprev, &header, params, algo);
@@ -228,12 +279,12 @@ arith_uint256 GetBlockProof(const CBlockIndex& block, int algo)
         bnTarget.SetCompact(nBits, &fNegative, &fOverflow);
         if (fNegative || fOverflow || bnTarget == 0)
             return 0;
-
         return (~bnTarget / (bnTarget + 1)) + 1;
     }
 }
 
-int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)
+int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from,
+                                    const CBlockIndex& tip, const Consensus::Params& params)
 {
     arith_uint256 r;
     int sign = 1;
@@ -250,9 +301,8 @@ int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& fr
     return sign * r.GetLow64();
 }
 
-/** Find the last common ancestor two blocks have.
- *  Both pa and pb must be non-nullptr. */
-const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* pb) {
+const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* pb)
+{
     if (pa->nHeight > pb->nHeight) {
         pa = pa->GetAncestor(pb->nHeight);
     } else if (pb->nHeight > pa->nHeight) {
