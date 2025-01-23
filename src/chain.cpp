@@ -117,12 +117,14 @@ CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime, int height) const
  */
 int CBlockIndex::GetAlgo() const
 {
-    // Force older blocks (before multi-algo) to scrypt
-    if (nHeight < 145000) {
-        return ALGO_SCRYPT;
+    // If we’re on mainnet, for historical reasons we force blocks below 145k to scrypt:
+    if (!Params().NetworkIDString().compare("main")) {
+        if (nHeight < 145000) {
+            return ALGO_SCRYPT;
+        }
     }
 
-    // Otherwise parse from (nVersion & BLOCK_VERSION_ALGO).
+    // Otherwise, parse from version bits (same as before):
     switch (nVersion & BLOCK_VERSION_ALGO) {
         case BLOCK_VERSION_SCRYPT:   return ALGO_SCRYPT;
         case BLOCK_VERSION_SHA256D:  return ALGO_SHA256D;
@@ -131,10 +133,12 @@ int CBlockIndex::GetAlgo() const
         case BLOCK_VERSION_QUBIT:    return ALGO_QUBIT;
         case BLOCK_VERSION_ODO:      return ALGO_ODO;
     }
-    // If not recognized, log it:
+
+    // If still not recognized:
     LogPrintf("Warning: block at height=%d has unrecognized nVersion=0x%08x\n", nHeight, nVersion);
     return ALGO_UNKNOWN;
 }
+
 
 /** Turn the lowest '1' bit in the binary representation of a number into '0'. */
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
