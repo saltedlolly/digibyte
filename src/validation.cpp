@@ -3101,24 +3101,8 @@ CBlockIndex* BlockManager::AddToBlockIndex(const CBlockHeader& block)
 
     // Use memcpy to copy the entire array at once.
     if (pindexNew->pprev) {
-        // Copy parent's lastAlgoBlocks
-        std::memcpy(
-            pindexNew->lastAlgoBlocks,
-            pindexNew->pprev->lastAlgoBlocks,
-            sizeof(pindexNew->lastAlgoBlocks)
-        );
-
-        // Overwrite the slot for the new block's own algo
-        // (the constructor sets just one entry, but we also
-        // want the rest of them to reference parent's data)
+        memcpy(pindexNew->lastAlgoBlocks, pindexNew->pprev->lastAlgoBlocks, sizeof(pindexNew->lastAlgoBlocks));
         pindexNew->lastAlgoBlocks[pindexNew->GetAlgo()] = pindexNew;
-    } else {
-        // For the genesis block, or if no parent:
-        // Already set to nullptr in the constructor for all algos,
-        // plus we set the entry for pindexNew->GetAlgo():
-        // (the existing constructor call does something like:
-        //   for (...) lastAlgoBlocks[i] = nullptr;
-        //   lastAlgoBlocks[GetAlgo()] = this;)
     }
 
     pindexNew->nTimeMax = (pindexNew->pprev ? std::max(pindexNew->pprev->nTimeMax, pindexNew->nTime) : pindexNew->nTime);
