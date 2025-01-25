@@ -61,7 +61,7 @@ public:
         READWRITE(VARINT(obj.nTimeLast));
     }
 
-     void SetNull() {
+    void SetNull() {
          nBlocks = 0;
          nSize = 0;
          nUndoSize = 0;
@@ -69,26 +69,26 @@ public:
          nHeightLast = 0;
          nTimeFirst = 0;
          nTimeLast = 0;
-     }
+    }
 
-     CBlockFileInfo() {
+    CBlockFileInfo() {
          SetNull();
-     }
+    }
 
-     std::string ToString() const;
+    std::string ToString() const;
 
-     /** update statistics (does not update nSize) */
-     void AddBlock(unsigned int nHeightIn, uint64_t nTimeIn) {
-         if (nBlocks==0 || nHeightFirst > nHeightIn)
-             nHeightFirst = nHeightIn;
-         if (nBlocks==0 || nTimeFirst > nTimeIn)
-             nTimeFirst = nTimeIn;
-         nBlocks++;
-         if (nHeightIn > nHeightLast)
-             nHeightLast = nHeightIn;
-         if (nTimeIn > nTimeLast)
-             nTimeLast = nTimeIn;
-     }
+    /** update statistics (does not update nSize) */
+    void AddBlock(unsigned int nHeightIn, uint64_t nTimeIn) {
+        if (nBlocks==0 || nHeightFirst > nHeightIn)
+            nHeightFirst = nHeightIn;
+        if (nBlocks==0 || nTimeFirst > nTimeIn)
+            nTimeFirst = nTimeIn;
+        nBlocks++;
+        if (nHeightIn > nHeightLast)
+            nHeightLast = nHeightIn;
+        if (nTimeIn > nTimeLast)
+            nTimeLast = nTimeIn;
+    }
 };
 
 enum BlockStatus: uint32_t {
@@ -202,21 +202,16 @@ public:
     unsigned int nTimeMax{0};
     CBlockIndex *lastAlgoBlocks[NUM_ALGOS_IMPL];
 
-    CBlockIndex()
-    {
-    }
+    /**
+     * Default constructor (no header):
+     */
+    CBlockIndex();
 
-    explicit CBlockIndex(const CBlockHeader& block)
-        : nVersion{block.nVersion},
-          hashMerkleRoot{block.hashMerkleRoot},
-          nTime{block.nTime},
-          nBits{block.nBits},
-          nNonce{block.nNonce}
-    {
-         for (unsigned i = 0; i < NUM_ALGOS_IMPL; i++)
-             lastAlgoBlocks[i] = nullptr;
-         lastAlgoBlocks[GetAlgo()] = this;        
-    }
+    /**
+     * Full constructor that copies fields from a block header.
+     * (Definition is moved to chain.cpp so we can log from there)
+     */
+    explicit CBlockIndex(const CBlockHeader& block);
 
     FlatFilePos GetBlockPos() const {
         FlatFilePos ret;
@@ -260,12 +255,6 @@ public:
         return GetPoWAlgoHash(block);
     }
 
-    int GetAlgo() const
-    {
-        CBlockHeader block = GetBlockHeader();
-        return block.GetAlgo();
-    }
-    
     /**
      * Check whether this block's and all previous blocks' transactions have been
      * downloaded (and stored to disk) at some point.
@@ -273,6 +262,8 @@ public:
      * Does not imply the transactions are consensus-valid (ConnectTip might fail)
      * Does not imply the transactions are still stored on disk. (IsBlockPruned might return true)
      */
+    int GetAlgo() const;
+
     bool HaveTxsDownloaded() const { return nChainTx != 0; }
 
     int64_t GetBlockTime() const
